@@ -1,0 +1,57 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "stream-demo",
+      "catalogId": "basic"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "stream-demo",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["loading_text"] },
+        { "id": "loading_text", "component": "Text", "text": "Thinking...", "variant": "body" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "stream-demo",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "desc"] },
+        { "id": "title", "component": "Text", "text": "Weather Forecast", "variant": "h3" },
+        { "id": "desc", "component": "Text", "text": "Loading forecast data...", "variant": "body" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "stream-demo",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "desc", "card1"] },
+        { "id": "desc", "component": "Text", "text": "Here is today's weather in Shanghai:", "variant": "body" },
+        { "id": "card1", "component": "Card", "child": "card1_col" },
+        { "id": "card1_col", "component": "Column", "children": ["card1_city", "card1_temp"] },
+        { "id": "card1_city", "component": "Text", "text": "Shanghai — 26°C Sunny", "variant": "h4" },
+        { "id": "card1_temp", "component": "Text", "text": "Clear skies all day.", "variant": "body" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "stream-demo",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "desc", "card1", "card2"] },
+        { "id": "card2", "component": "Card", "child": "card2_col" },
+        { "id": "card2_col", "component": "Column", "children": ["card2_city", "card2_temp"] },
+        { "id": "card2_city", "component": "Text", "text": "Beijing — 18°C Cloudy", "variant": "h4" },
+        { "id": "card2_temp", "component": "Text", "text": "Possible rain in the afternoon.", "variant": "body" }
+      ]
+    }
+  }
+]

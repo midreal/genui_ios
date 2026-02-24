@@ -1,0 +1,40 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "interactive-demo",
+      "catalogId": "basic"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "interactive-demo",
+      "path": "/",
+      "value": {
+        "name": "",
+        "email": "",
+        "agree": false,
+        "result": ""
+      }
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "interactive-demo",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["header", "divider0", "name_field", "email_field", "agree_check", "submit_btn", "divider1", "result_text"] },
+        { "id": "header", "component": "Text", "text": "Interactive Form", "variant": "h3" },
+        { "id": "divider0", "component": "Divider" },
+        { "id": "name_field", "component": "TextField", "binding": "/name", "label": "Full Name" },
+        { "id": "email_field", "component": "TextField", "binding": "/email", "label": "Email" },
+        { "id": "agree_check", "component": "CheckBox", "binding": "/agree", "label": "I agree to the terms" },
+        { "id": "submit_btn", "component": "Button", "child": "submit_text", "variant": "primary", "action": { "event": { "name": "submit_form" } } },
+        { "id": "submit_text", "component": "Text", "text": "Submit" },
+        { "id": "divider1", "component": "Divider" },
+        { "id": "result_text", "component": "Text", "text": { "path": "/result" }, "variant": "body" }
+      ]
+    }
+  }
+]

@@ -1,0 +1,31 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "static-demo",
+      "catalogId": "basic"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "static-demo",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "subtitle", "divider1", "card1", "row1", "btn1"] },
+        { "id": "title", "component": "Text", "text": "A2UI Static Render", "variant": "h2" },
+        { "id": "subtitle", "component": "Text", "text": "This UI is built from a SurfaceDefinition with no server.", "variant": "body" },
+        { "id": "divider1", "component": "Divider" },
+        { "id": "card1", "component": "Card", "child": "card_content" },
+        { "id": "card_content", "component": "Column", "children": ["card_title", "card_body"] },
+        { "id": "card_title", "component": "Text", "text": "Card Component", "variant": "h4" },
+        { "id": "card_body", "component": "Text", "text": "Demonstrates the Card container.", "variant": "body" },
+        { "id": "row1", "component": "Row", "children": ["icon_star", "icon_heart", "icon_search"], "align": "center" },
+        { "id": "icon_star", "component": "Icon", "icon": "star", "size": 28, "color": "orange" },
+        { "id": "icon_heart", "component": "Icon", "icon": "favorite", "size": 28, "color": "red" },
+        { "id": "icon_search", "component": "Icon", "icon": "search", "size": 28, "color": "blue" },
+        { "id": "btn1", "component": "Button", "child": "btn1_text", "variant": "primary", "action": { "event": { "name": "demo_tap" } } },
+        { "id": "btn1_text", "component": "Text", "text": "Primary Button" }
+      ]
+    }
+  }
+]

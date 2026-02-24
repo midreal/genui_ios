@@ -1,4 +1,4 @@
-# ===== Xcode =====
+# Xcode
 build/
 DerivedData/
 *.pbxuser
@@ -12,67 +12,21 @@ DerivedData/
 xcuserdata/
 *.xccheckout
 *.moved-aside
-*.xcuserstate
-*.xcscmblueprint
-*.xcworkspace/xcuserdata/
-
-# ===== Swift Package Manager =====
-.build/
-Packages/
-Package.pins
-Package.resolved
-*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-.swiftpm/
-
-# ===== CocoaPods =====
-Pods/
-*.xcworkspace
-
-# ===== Carthage =====
-Carthage/Build/
-Carthage/Checkouts/
-
-# ===== Fastlane =====
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-
-# ===== Code Injection =====
-iOSInjectionProject/
-
-# ===== macOS =====
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
-
-# ===== IDE =====
-*.swp
-*~
-.idea/
-*.iml
-.vscode/
-
-# ===== Playgrounds =====
-timeline.xctimeline
-playground.xcworkspace
-
-# ===== Archives & IPA =====
+*.hmap
 *.ipa
 *.dSYM.zip
 *.dSYM
-*.app
 
-# ===== Provisioning Profiles =====
-*.mobileprovision
-*.provisionprofile
+# CocoaPods
+Pods/
+!Podfile
+!Podfile.lock
 
-# ===== Environment & Secrets =====
-.env
-.env.*
-*.pem
-*.p12
-*.key
+# Swift Package Manager
+.build/
+Package.resolved
+
+# OS
+.DS_Store
+*.swp
+*~
