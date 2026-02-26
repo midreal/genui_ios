@@ -5,12 +5,14 @@ import Combine
 ///
 /// Parameters:
 /// - `tabs`: Array of `{"label": "...", "child": "<componentId>"}` objects.
+/// - `activeTab`: Data binding path for the active tab index (number, bidirectional).
 enum TabsComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "Tabs") { context in
             let wrapper = BindableView()
             let tabs = context.data["tabs"] as? [JsonMap] ?? []
+            let activeTabBinding = context.data["activeTab"] as? String
 
             let stack = UIStackView()
             stack.axis = .vertical
@@ -45,10 +47,37 @@ enum TabsComponent {
 
             showTab(at: 0)
 
-            segmented.addAction(UIAction { [weak segmented] _ in
-                guard let idx = segmented?.selectedSegmentIndex else { return }
-                showTab(at: idx)
-            }, for: .valueChanged)
+            if let path = activeTabBinding {
+                var isUpdatingFromModel = false
+
+                let cancellable = context.dataContext.subscribe(pathString: path)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak segmented] value in
+                        guard let segmented = segmented else { return }
+                        let idx: Int
+                        if let n = value as? Int { idx = n }
+                        else if let n = value as? NSNumber { idx = n.intValue }
+                        else { return }
+                        guard idx >= 0, idx < tabs.count, idx != segmented.selectedSegmentIndex else { return }
+                        isUpdatingFromModel = true
+                        segmented.selectedSegmentIndex = idx
+                        showTab(at: idx)
+                        isUpdatingFromModel = false
+                    }
+                wrapper.storeCancellable(cancellable)
+
+                let dataCtx = context.dataContext
+                segmented.addAction(UIAction { [weak segmented] _ in
+                    guard !isUpdatingFromModel, let idx = segmented?.selectedSegmentIndex else { return }
+                    showTab(at: idx)
+                    dataCtx.update(pathString: path, value: idx)
+                }, for: .valueChanged)
+            } else {
+                segmented.addAction(UIAction { [weak segmented] _ in
+                    guard let idx = segmented?.selectedSegmentIndex else { return }
+                    showTab(at: idx)
+                }, for: .valueChanged)
+            }
 
             return wrapper
         }

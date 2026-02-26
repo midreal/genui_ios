@@ -152,11 +152,37 @@ public final class SurfaceView: UIView {
     }
 
     private func makeFallbackView(message: String) -> UIView {
+        let container = UIView()
+        container.backgroundColor = UIColor.systemRed.withAlphaComponent(0.08)
+        container.layer.cornerRadius = 6
+        container.layer.borderColor = UIColor.systemRed.withAlphaComponent(0.3).cgColor
+        container.layer.borderWidth = 1
+
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 6
+        stack.alignment = .center
+        container.addSubview(stack)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: container.topAnchor, constant: 6),
+            stack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
+            stack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
+            stack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -6)
+        ])
+
+        let icon = UIImageView(image: UIImage(systemName: "exclamationmark.triangle.fill"))
+        icon.tintColor = .systemRed
+        icon.setContentHuggingPriority(.required, for: .horizontal)
+        stack.addArrangedSubview(icon)
+
         let label = UILabel()
         label.text = message
         label.textColor = .systemRed
         label.font = .systemFont(ofSize: 11)
         label.numberOfLines = 0
-        return label
+        stack.addArrangedSubview(label)
+
+        return container
     }
 }

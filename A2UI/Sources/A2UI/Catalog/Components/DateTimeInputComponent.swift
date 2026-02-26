@@ -7,14 +7,16 @@ import Combine
 /// - `binding`: Data path for the date string (ISO 8601).
 /// - `mode`: "date", "time", or "dateAndTime" (default "date").
 /// - `label`: Optional label text.
+/// - `checks`: Array of `{condition, message}` for validation.
 enum DateTimeInputComponent {
 
     static func register() -> CatalogItem {
-        CatalogItem(name: "DateTimeInput") { context in
+        CatalogItem(name: "DateTimeInput", isImplicitlyFlexible: true) { context in
             let wrapper = BindableView()
             let bindingPath = context.data["binding"] as? String
             let mode = context.data["mode"] as? String ?? "date"
             let labelText = context.data["label"] as? String
+            let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
 
             let stack = UIStackView()
             stack.axis = .vertical
@@ -37,6 +39,13 @@ enum DateTimeInputComponent {
             default: picker.datePickerMode = .date
             }
             stack.addArrangedSubview(picker)
+
+            let errorLabel = UILabel()
+            errorLabel.font = .systemFont(ofSize: 12)
+            errorLabel.textColor = .systemRed
+            errorLabel.numberOfLines = 0
+            errorLabel.isHidden = true
+            stack.addArrangedSubview(errorLabel)
 
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -61,6 +70,16 @@ enum DateTimeInputComponent {
                     guard !isUpdatingFromModel, let picker = picker else { return }
                     dataCtx.update(pathString: path, value: formatter.string(from: picker.date))
                 }, for: .valueChanged)
+            }
+
+            if let checks = checks, !checks.isEmpty {
+                let validationCancellable = ValidationHelper.validateStream(checks: checks, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak errorLabel] errorMessage in
+                        errorLabel?.text = errorMessage
+                        errorLabel?.isHidden = (errorMessage == nil)
+                    }
+                wrapper.storeCancellable(validationCancellable)
             }
 
             return wrapper

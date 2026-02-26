@@ -1,68 +1,326 @@
 import UIKit
 import Combine
 
-/// A segmented control for single-choice selection with data binding.
+/// A selection component supporting single/multi-select with various display styles.
 ///
 /// Parameters:
-/// - `binding`: Data path for the selected value.
+/// - `binding`: Data path for the selected value(s) — single string or string array.
 /// - `options`: Array of `{"label": "...", "value": "..."}` objects.
+/// - `label`: Optional group label.
+/// - `variant`: "mutuallyExclusive" (radio) or "multipleSelection" (checkbox). Default is multipleSelection.
+/// - `displayStyle`: "checkbox" (default) or "chips".
+/// - `filterable`: Whether to show a search/filter field.
+/// - `checks`: Array of `{condition, message}` for validation.
 enum ChoicePickerComponent {
 
     static func register() -> CatalogItem {
-        CatalogItem(name: "ChoicePicker") { context in
+        CatalogItem(name: "ChoicePicker", isImplicitlyFlexible: true) { context in
             let wrapper = BindableView()
             let bindingPath = context.data["binding"] as? String
             let options = context.data["options"] as? [JsonMap] ?? []
             let labelText = context.data["label"] as? String
+            let variant = context.data["variant"] as? String ?? "multipleSelection"
+            let displayStyle = context.data["displayStyle"] as? String ?? "checkbox"
+            let filterable = context.data["filterable"] as? Bool ?? false
+            let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
 
-            let stack = UIStackView()
-            stack.axis = .vertical
-            stack.spacing = 6
-            wrapper.embed(stack)
+            let isMutuallyExclusive = variant == "mutuallyExclusive"
+            let isChips = displayStyle == "chips"
+
+            let outerStack = UIStackView()
+            outerStack.axis = .vertical
+            outerStack.spacing = 8
+            wrapper.embed(outerStack)
 
             if let text = labelText {
                 let label = UILabel()
                 label.text = text
-                label.font = .systemFont(ofSize: 13, weight: .medium)
+                label.font = .systemFont(ofSize: 15, weight: .medium)
                 label.textColor = .secondaryLabel
-                stack.addArrangedSubview(label)
+                outerStack.addArrangedSubview(label)
             }
 
-            let labels = options.map { $0["label"] as? String ?? "" }
-            let values = options.map { $0["value"] ?? $0["label"] ?? "" }
-            let segmented = UISegmentedControl(items: labels)
-            stack.addArrangedSubview(segmented)
+            var filterText = ""
+            let optionsContainer = UIStackView()
+
+            if filterable {
+                let filterField = UITextField()
+                filterField.placeholder = "Filter options"
+                filterField.borderStyle = .roundedRect
+                filterField.font = .systemFont(ofSize: 14)
+                outerStack.addArrangedSubview(filterField)
+
+                filterField.addAction(UIAction { [weak filterField] _ in
+                    filterText = filterField?.text ?? ""
+                    updateOptionViews(
+                        container: optionsContainer, options: options,
+                        selectedValues: currentSelections(context: context, path: bindingPath),
+                        filterText: filterText, isMutuallyExclusive: isMutuallyExclusive,
+                        isChips: isChips, context: context, bindingPath: bindingPath
+                    )
+                }, for: .editingChanged)
+            }
+
+            if isChips {
+                optionsContainer.axis = .horizontal
+                optionsContainer.spacing = 8
+                optionsContainer.alignment = .center
+                optionsContainer.distribution = .fill
+
+                let scrollView = UIScrollView()
+                scrollView.showsHorizontalScrollIndicator = false
+                scrollView.addSubview(optionsContainer)
+                optionsContainer.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    optionsContainer.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+                    optionsContainer.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+                    optionsContainer.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+                    optionsContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+                    optionsContainer.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor)
+                ])
+                scrollView.heightAnchor.constraint(greaterThanOrEqualToConstant: 36).isActive = true
+                outerStack.addArrangedSubview(scrollView)
+            } else {
+                optionsContainer.axis = .vertical
+                optionsContainer.spacing = 2
+                outerStack.addArrangedSubview(optionsContainer)
+            }
+
+            let errorLabel = UILabel()
+            errorLabel.font = .systemFont(ofSize: 12)
+            errorLabel.textColor = .systemRed
+            errorLabel.numberOfLines = 0
+            errorLabel.isHidden = true
+            outerStack.addArrangedSubview(errorLabel)
 
             if let path = bindingPath {
-                var isUpdatingFromModel = false
-
                 let cancellable = context.dataContext.subscribe(pathString: path)
                     .receive(on: DispatchQueue.main)
-                    .sink { [weak segmented] value in
-                        guard let segmented = segmented else { return }
-                        isUpdatingFromModel = true
-                        if let strVal = value as? String,
-                           let idx = values.firstIndex(where: { "\($0)" == strVal }) {
-                            segmented.selectedSegmentIndex = idx
-                        } else if let numVal = value as? Int, numVal < values.count {
-                            segmented.selectedSegmentIndex = numVal
-                        } else {
-                            segmented.selectedSegmentIndex = UISegmentedControl.noSegment
-                        }
-                        isUpdatingFromModel = false
+                    .sink { [weak optionsContainer] _ in
+                        guard let container = optionsContainer else { return }
+                        updateOptionViews(
+                            container: container, options: options,
+                            selectedValues: currentSelections(context: context, path: bindingPath),
+                            filterText: filterText, isMutuallyExclusive: isMutuallyExclusive,
+                            isChips: isChips, context: context, bindingPath: bindingPath
+                        )
                     }
                 wrapper.storeCancellable(cancellable)
+            }
 
-                let dataCtx = context.dataContext
-                segmented.addAction(UIAction { [weak segmented] _ in
-                    guard !isUpdatingFromModel, let segmented = segmented else { return }
-                    let idx = segmented.selectedSegmentIndex
-                    guard idx >= 0, idx < values.count else { return }
-                    dataCtx.update(pathString: path, value: values[idx])
-                }, for: .valueChanged)
+            updateOptionViews(
+                container: optionsContainer, options: options,
+                selectedValues: currentSelections(context: context, path: bindingPath),
+                filterText: filterText, isMutuallyExclusive: isMutuallyExclusive,
+                isChips: isChips, context: context, bindingPath: bindingPath
+            )
+
+            if let checks = checks, !checks.isEmpty {
+                let validationCancellable = ValidationHelper.validateStream(checks: checks, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak errorLabel] errorMessage in
+                        errorLabel?.text = errorMessage
+                        errorLabel?.isHidden = (errorMessage == nil)
+                    }
+                wrapper.storeCancellable(validationCancellable)
             }
 
             return wrapper
         }
+    }
+
+    private static func currentSelections(context: CatalogItemContext, path: String?) -> [String] {
+        guard let path = path else { return [] }
+        let value = context.dataContext.getValue(pathString: path)
+        if let arr = value as? [Any] {
+            return arr.map { "\($0)" }
+        }
+        if let str = value as? String {
+            return [str]
+        }
+        return []
+    }
+
+    private static func updateOptionViews(
+        container: UIStackView,
+        options: [JsonMap],
+        selectedValues: [String],
+        filterText: String,
+        isMutuallyExclusive: Bool,
+        isChips: Bool,
+        context: CatalogItemContext,
+        bindingPath: String?
+    ) {
+        container.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        for option in options {
+            let optionLabel = option["label"] as? String ?? ""
+            let optionValue = option["value"] as? String ?? optionLabel
+
+            if !filterText.isEmpty &&
+               !optionLabel.lowercased().contains(filterText.lowercased()) {
+                continue
+            }
+
+            let isSelected = selectedValues.contains(optionValue)
+
+            if isChips {
+                let chip = makeChipButton(
+                    label: optionLabel, isSelected: isSelected,
+                    onTap: {
+                        toggleSelection(
+                            value: optionValue, isSelected: !isSelected,
+                            isMutuallyExclusive: isMutuallyExclusive,
+                            context: context, bindingPath: bindingPath
+                        )
+                    }
+                )
+                container.addArrangedSubview(chip)
+            } else if isMutuallyExclusive {
+                let row = makeRadioRow(
+                    label: optionLabel, isSelected: isSelected,
+                    onTap: {
+                        guard let path = bindingPath else { return }
+                        context.dataContext.update(pathString: path, value: [optionValue])
+                    }
+                )
+                container.addArrangedSubview(row)
+            } else {
+                let row = makeCheckboxRow(
+                    label: optionLabel, isSelected: isSelected,
+                    onTap: {
+                        toggleSelection(
+                            value: optionValue, isSelected: !isSelected,
+                            isMutuallyExclusive: false,
+                            context: context, bindingPath: bindingPath
+                        )
+                    }
+                )
+                container.addArrangedSubview(row)
+            }
+        }
+    }
+
+    private static func toggleSelection(
+        value: String,
+        isSelected: Bool,
+        isMutuallyExclusive: Bool,
+        context: CatalogItemContext,
+        bindingPath: String?
+    ) {
+        guard let path = bindingPath else { return }
+        if isMutuallyExclusive {
+            context.dataContext.update(pathString: path, value: [value])
+            return
+        }
+        var current = currentSelections(context: context, path: path)
+        if isSelected {
+            if !current.contains(value) { current.append(value) }
+        } else {
+            current.removeAll { $0 == value }
+        }
+        context.dataContext.update(pathString: path, value: current)
+    }
+
+    // MARK: - UI Factories
+
+    private static func makeChipButton(label: String, isSelected: Bool, onTap: @escaping () -> Void) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(label, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.layer.cornerRadius = 16
+        button.clipsToBounds = true
+        button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 14, bottom: 6, right: 14)
+
+        if isSelected {
+            button.backgroundColor = .systemBlue
+            button.setTitleColor(.white, for: .normal)
+        } else {
+            button.backgroundColor = .secondarySystemBackground
+            button.setTitleColor(.label, for: .normal)
+        }
+
+        button.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
+        return button
+    }
+
+    private static func makeRadioRow(label: String, isSelected: Bool, onTap: @escaping () -> Void) -> UIView {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 10
+        stack.alignment = .center
+        stack.isLayoutMarginsRelativeArrangement = true
+        stack.layoutMargins = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
+
+        let indicator = UIImageView()
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        indicator.image = UIImage(
+            systemName: isSelected ? "largecircle.fill.circle" : "circle",
+            withConfiguration: config
+        )
+        indicator.tintColor = isSelected ? .systemBlue : .tertiaryLabel
+        indicator.setContentHuggingPriority(.required, for: .horizontal)
+        stack.addArrangedSubview(indicator)
+
+        let textLabel = UILabel()
+        textLabel.text = label
+        textLabel.font = .systemFont(ofSize: 15)
+        stack.addArrangedSubview(textLabel)
+
+        let tap = UITapGestureRecognizer(target: nil, action: nil)
+        stack.addGestureRecognizer(tap)
+        stack.isUserInteractionEnabled = true
+
+        let button = UIButton(type: .system)
+        button.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
+        button.setTitle("", for: .normal)
+        stack.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: stack.topAnchor),
+            button.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
+            button.bottomAnchor.constraint(equalTo: stack.bottomAnchor)
+        ])
+
+        return stack
+    }
+
+    private static func makeCheckboxRow(label: String, isSelected: Bool, onTap: @escaping () -> Void) -> UIView {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 10
+        stack.alignment = .center
+        stack.isLayoutMarginsRelativeArrangement = true
+        stack.layoutMargins = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
+
+        let indicator = UIImageView()
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        indicator.image = UIImage(
+            systemName: isSelected ? "checkmark.square.fill" : "square",
+            withConfiguration: config
+        )
+        indicator.tintColor = isSelected ? .systemBlue : .tertiaryLabel
+        indicator.setContentHuggingPriority(.required, for: .horizontal)
+        stack.addArrangedSubview(indicator)
+
+        let textLabel = UILabel()
+        textLabel.text = label
+        textLabel.font = .systemFont(ofSize: 15)
+        stack.addArrangedSubview(textLabel)
+
+        let button = UIButton(type: .system)
+        button.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
+        button.setTitle("", for: .normal)
+        stack.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: stack.topAnchor),
+            button.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
+            button.bottomAnchor.constraint(equalTo: stack.bottomAnchor)
+        ])
+
+        return stack
     }
 }

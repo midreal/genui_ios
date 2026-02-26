@@ -1,14 +1,24 @@
 import UIKit
 
-/// A horizontal divider line.
+/// A divider line, horizontal or vertical.
+///
+/// Parameters:
+/// - `axis`: "horizontal" (default) or "vertical".
 enum DividerComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "Divider") { context in
+            let axis = context.data["axis"] as? String ?? "horizontal"
             let divider = UIView()
             divider.backgroundColor = .separator
             divider.translatesAutoresizingMaskIntoConstraints = false
-            divider.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale).isActive = true
+
+            let thickness = 1.0 / UIScreen.main.scale
+            if axis == "vertical" {
+                divider.widthAnchor.constraint(equalToConstant: thickness).isActive = true
+            } else {
+                divider.heightAnchor.constraint(equalToConstant: thickness).isActive = true
+            }
             return divider
         }
     }

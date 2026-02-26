@@ -8,6 +8,7 @@ import Combine
 /// - `min`: Minimum value (default 0).
 /// - `max`: Maximum value (default 100).
 /// - `label`: Optional label text.
+/// - `checks`: Array of `{condition, message}` for validation.
 enum SliderComponent {
 
     static func register() -> CatalogItem {
@@ -17,6 +18,7 @@ enum SliderComponent {
             let minVal = (context.data["min"] as? NSNumber)?.floatValue ?? 0
             let maxVal = (context.data["max"] as? NSNumber)?.floatValue ?? 100
             let labelText = context.data["label"] as? String
+            let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
 
             let stack = UIStackView()
             stack.axis = .vertical
@@ -48,6 +50,13 @@ enum SliderComponent {
             valueLabel.setContentHuggingPriority(.required, for: .horizontal)
             sliderStack.addArrangedSubview(valueLabel)
 
+            let errorLabel = UILabel()
+            errorLabel.font = .systemFont(ofSize: 12)
+            errorLabel.textColor = .systemRed
+            errorLabel.numberOfLines = 0
+            errorLabel.isHidden = true
+            stack.addArrangedSubview(errorLabel)
+
             if let path = bindingPath {
                 var isUpdatingFromModel = false
 
@@ -70,6 +79,16 @@ enum SliderComponent {
                     valueLabel?.text = String(format: "%.0f", val)
                     dataCtx.update(pathString: path, value: val)
                 }, for: .valueChanged)
+            }
+
+            if let checks = checks, !checks.isEmpty {
+                let validationCancellable = ValidationHelper.validateStream(checks: checks, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak errorLabel] errorMessage in
+                        errorLabel?.text = errorMessage
+                        errorLabel?.isHidden = (errorMessage == nil)
+                    }
+                wrapper.storeCancellable(validationCancellable)
             }
 
             return wrapper

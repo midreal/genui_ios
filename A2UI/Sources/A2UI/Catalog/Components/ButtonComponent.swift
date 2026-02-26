@@ -7,10 +7,12 @@ import Combine
 /// - `child`: The ID of a child component (usually Text).
 /// - `action`: The action to perform — `{"event": {"name": "..."}}` or `{"functionCall": {...}}`.
 /// - `variant`: Style hint — "primary" or "borderless".
+/// - `checks`: Array of `{condition, message}` for enabling/disabling the button.
 enum ButtonComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "Button") { context in
+            let wrapper = BindableView()
             let button = UIButton(type: .system)
             button.translatesAutoresizingMaskIntoConstraints = false
 
@@ -44,7 +46,20 @@ enum ButtonComponent {
                 handlePress(action: action, componentId: componentId, dispatch: dispatch, dataContext: dataCtx)
             }, for: .touchUpInside)
 
-            return button
+            wrapper.embed(button)
+
+            let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
+            if let checks = checks, !checks.isEmpty {
+                let cancellable = ValidationHelper.validateStream(checks: checks, context: dataCtx)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak button] errorMessage in
+                        button?.isEnabled = (errorMessage == nil)
+                        button?.alpha = (errorMessage == nil) ? 1.0 : 0.5
+                    }
+                wrapper.storeCancellable(cancellable)
+            }
+
+            return wrapper
         }
     }
 
@@ -92,15 +107,29 @@ enum ButtonComponent {
 
         if let eventMap = action["event"] as? JsonMap,
            let name = eventMap["name"] as? String {
-            let contextData = eventMap["context"] as? JsonMap ?? [:]
-            let event = UiEvent(data: [
-                "name": name,
-                "sourceComponentId": componentId,
-                "timestamp": ISO8601DateFormatter().string(from: Date()),
-                "context": contextData
-            ])
-            dispatch(event)
+            let contextDefinition = eventMap["context"] as? JsonMap
+
+            var cancellable: AnyCancellable?
+            cancellable = ContextResolver.resolveContext(dataContext, contextDefinition)
+                .receive(on: DispatchQueue.main)
+                .sink { resolvedContext in
+                    let event = UiEvent(data: [
+                        "name": name,
+                        "sourceComponentId": componentId,
+                        "timestamp": ISO8601DateFormatter().string(from: Date()),
+                        "context": resolvedContext
+                    ])
+                    dispatch(event)
+                    _ = cancellable
+                }
         } else if let funcMap = action["functionCall"] as? JsonMap {
+            if let callName = funcMap["call"] as? String, callName == "closeModal" {
+                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let topVC = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController?.presentedViewController {
+                    topVC.dismiss(animated: true)
+                }
+                return
+            }
             _ = dataContext.resolve(funcMap)
         }
     }

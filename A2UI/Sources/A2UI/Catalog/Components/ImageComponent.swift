@@ -1,13 +1,12 @@
 import UIKit
 import Combine
 
-/// Displays an image from a URL.
+/// Displays an image from a URL with variant-based sizing.
 ///
 /// Parameters:
 /// - `url`: The image URL (literal or data binding).
-/// - `width`: Optional fixed width.
-/// - `height`: Optional fixed height.
 /// - `fit`: Content mode — "cover", "contain", "fill" (default "cover").
+/// - `variant`: Size/style hint — "icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header".
 enum ImageComponent {
 
     static func register() -> CatalogItem {
@@ -18,13 +17,37 @@ enum ImageComponent {
             imageView.clipsToBounds = true
             imageView.backgroundColor = .tertiarySystemFill
             imageView.layer.cornerRadius = 8
-            wrapper.embed(imageView)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
 
-            if let width = context.data["width"] as? CGFloat {
-                imageView.widthAnchor.constraint(equalToConstant: width).isActive = true
+            let variant = context.data["variant"] as? String
+            let size = sizeForVariant(variant)
+
+            if variant == "avatar" {
+                imageView.layer.cornerRadius = size / 2
             }
-            if let height = context.data["height"] as? CGFloat {
-                imageView.heightAnchor.constraint(equalToConstant: height).isActive = true
+
+            if variant == "header" {
+                wrapper.embed(imageView)
+            } else {
+                wrapper.addSubview(imageView)
+                NSLayoutConstraint.activate([
+                    imageView.topAnchor.constraint(equalTo: wrapper.topAnchor),
+                    imageView.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor),
+                    imageView.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor),
+                    imageView.widthAnchor.constraint(equalToConstant: size),
+                    imageView.heightAnchor.constraint(equalToConstant: size)
+                ])
+            }
+
+            if let explicitWidth = context.data["width"] as? CGFloat {
+                let c = imageView.widthAnchor.constraint(equalToConstant: explicitWidth)
+                c.priority = .required
+                c.isActive = true
+            }
+            if let explicitHeight = context.data["height"] as? CGFloat {
+                let c = imageView.heightAnchor.constraint(equalToConstant: explicitHeight)
+                c.priority = .required
+                c.isActive = true
             }
 
             let urlValue = context.data["url"]
@@ -42,6 +65,16 @@ enum ImageComponent {
         }
     }
 
+    private static func sizeForVariant(_ variant: String?) -> CGFloat {
+        switch variant {
+        case "icon", "avatar": return 32
+        case "smallFeature": return 50
+        case "mediumFeature": return 150
+        case "largeFeature": return 400
+        default: return 150
+        }
+    }
+
     private static func parseContentMode(_ fit: String?) -> UIView.ContentMode {
         switch fit {
         case "contain": return .scaleAspectFit
@@ -54,7 +87,9 @@ enum ImageComponent {
         URLSession.shared.dataTask(with: url) { data, _, _ in
             guard let data = data, let image = UIImage(data: data) else { return }
             DispatchQueue.main.async {
-                imageView.image = image
+                UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve) {
+                    imageView.image = image
+                }
             }
         }.resume()
     }

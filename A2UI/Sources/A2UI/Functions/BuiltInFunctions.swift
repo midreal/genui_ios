@@ -1,10 +1,11 @@
 import Foundation
 import Combine
+import UIKit
 
 /// Factory for all built-in client functions.
 public enum BuiltInFunctions {
 
-    /// Returns all 12 built-in functions.
+    /// Returns all 14 built-in functions.
     public static func all() -> [ClientFunction] {
         [
             RequiredFunction(),
@@ -13,9 +14,11 @@ public enum BuiltInFunctions {
             NumericFunction(),
             EmailFunction(),
             FormatStringFunction(),
+            OpenUrlFunction(),
             FormatNumberFunction(),
             FormatCurrencyFunction(),
             FormatDateFunction(),
+            PluralizeFunction(),
             AndFunction(),
             OrFunction(),
             NotFunction(),
@@ -25,7 +28,6 @@ public enum BuiltInFunctions {
 
 // MARK: - Validation Functions
 
-/// Returns an error message if the value is nil or empty, otherwise nil (valid).
 final class RequiredFunction: SynchronousClientFunction {
     init() { super.init(name: "required") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
@@ -38,7 +40,6 @@ final class RequiredFunction: SynchronousClientFunction {
     }
 }
 
-/// Validates a value against a regex pattern.
 final class RegexFunction: SynchronousClientFunction {
     init() { super.init(name: "regex") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
@@ -53,23 +54,30 @@ final class RegexFunction: SynchronousClientFunction {
     }
 }
 
-/// Validates string length is within min/max bounds.
 final class LengthFunction: SynchronousClientFunction {
     init() { super.init(name: "length") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
-        guard let value = args["value"] as? String else { return nil }
-        let len = value.count
-        if let min = args["min"] as? Int, len < min {
-            return "Must be at least \(min) characters"
+        let value = args["value"]
+        var length = 0
+        if value == nil {
+            length = 0
+        } else if let str = value as? String {
+            length = str.count
+        } else if let arr = value as? [Any] {
+            length = arr.count
+        } else if let dict = value as? JsonMap {
+            length = dict.count
         }
-        if let max = args["max"] as? Int, len > max {
-            return "Must be at most \(max) characters"
+
+        if args["min"] != nil || args["max"] != nil {
+            if let min = args["min"] as? Int, length < min { return false }
+            if let max = args["max"] as? Int, length > max { return false }
+            return true
         }
-        return nil
+        return length
     }
 }
 
-/// Validates a numeric value is within min/max bounds.
 final class NumericFunction: SynchronousClientFunction {
     init() { super.init(name: "numeric") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
@@ -89,7 +97,6 @@ final class NumericFunction: SynchronousClientFunction {
     }
 }
 
-/// Validates that a value is a valid email address.
 final class EmailFunction: SynchronousClientFunction {
     init() { super.init(name: "email") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
@@ -106,25 +113,49 @@ final class EmailFunction: SynchronousClientFunction {
 
 // MARK: - Format Functions
 
-/// String interpolation using `{key}` placeholders.
-final class FormatStringFunction: SynchronousClientFunction {
-    init() { super.init(name: "formatString") }
-    override func executeSync(args: JsonMap, context: DataContext) -> Any? {
-        guard let template = args["value"] as? String else { return args["value"] }
+/// String interpolation using `${expression}` syntax (with ExpressionParser)
+/// and simple `{key}` placeholder fallback.
+final class FormatStringFunction: ClientFunction {
+    let name = "formatString"
+
+    func execute(args: JsonMap, context: DataContext) -> AnyPublisher<Any?, Never> {
+        guard let template = args["value"] as? String else {
+            return Just(args["value"]).eraseToAnyPublisher()
+        }
+
+        if template.contains("${") {
+            let parser = ExpressionParser(context: context)
+            return parser.parse(template)
+                .map { $0 as Any? }
+                .eraseToAnyPublisher()
+        }
+
         var result = template
         for (key, val) in args where key != "value" {
-            result = result.replacingOccurrences(of: "{\(key)}", with: "\(val ?? "")")
+            result = result.replacingOccurrences(of: "{\(key)}", with: "\(val)")
         }
-        return result
+        return Just(result as Any?).eraseToAnyPublisher()
     }
 }
 
-/// Formats a number with optional decimal places and grouping.
+/// Opens an external URL.
+final class OpenUrlFunction: SynchronousClientFunction {
+    init() { super.init(name: "openUrl") }
+    override func executeSync(args: JsonMap, context: DataContext) -> Any? {
+        guard let urlStr = args["url"] as? String,
+              let url = URL(string: urlStr) else { return false }
+        DispatchQueue.main.async {
+            UIApplication.shared.open(url)
+        }
+        return true
+    }
+}
+
 final class FormatNumberFunction: SynchronousClientFunction {
     init() { super.init(name: "formatNumber") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         guard let value = args["value"],
-              let number = (value as? NSNumber)?.doubleValue ?? Double("\(value ?? 0)") else {
+              let number = (value as? NSNumber)?.doubleValue ?? Double("\(value)") else {
             return "\(args["value"] ?? "")"
         }
         let formatter = NumberFormatter()
@@ -140,12 +171,11 @@ final class FormatNumberFunction: SynchronousClientFunction {
     }
 }
 
-/// Formats a number as currency.
 final class FormatCurrencyFunction: SynchronousClientFunction {
     init() { super.init(name: "formatCurrency") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         guard let value = args["value"],
-              let number = (value as? NSNumber)?.doubleValue ?? Double("\(value ?? 0)") else {
+              let number = (value as? NSNumber)?.doubleValue ?? Double("\(value)") else {
             return "\(args["value"] ?? "")"
         }
         let formatter = NumberFormatter()
@@ -157,43 +187,56 @@ final class FormatCurrencyFunction: SynchronousClientFunction {
     }
 }
 
-/// Formats a date string using the given pattern.
 final class FormatDateFunction: SynchronousClientFunction {
     init() { super.init(name: "formatDate") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         guard let value = args["value"] as? String else { return args["value"] }
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        guard let date = isoFormatter.date(from: value) else { return value }
+        let date: Date?
+        date = isoFormatter.date(from: value) ?? {
+            let alt = ISO8601DateFormatter()
+            alt.formatOptions = [.withInternetDateTime]
+            return alt.date(from: value)
+        }()
 
+        guard let parsedDate = date else { return value }
         let pattern = args["pattern"] as? String ?? "yyyy-MM-dd"
         let formatter = DateFormatter()
         formatter.dateFormat = pattern
-        return formatter.string(from: date)
+        return formatter.string(from: parsedDate)
+    }
+}
+
+/// Count-based pluralization with zero/one/other templates.
+final class PluralizeFunction: SynchronousClientFunction {
+    init() { super.init(name: "pluralize") }
+    override func executeSync(args: JsonMap, context: DataContext) -> Any? {
+        guard let count = (args["count"] as? NSNumber)?.intValue else { return "" }
+        if count == 0, let zero = args["zero"] as? String { return zero }
+        if count == 1, let one = args["one"] as? String { return one }
+        return args["other"] as? String ?? ""
     }
 }
 
 // MARK: - Logic Functions
 
-/// Logical AND over an array of boolean values.
 final class AndFunction: SynchronousClientFunction {
     init() { super.init(name: "and") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         guard let values = args["values"] as? [Any] else { return false }
-        return values.allSatisfy { ($0 as? Bool) == true }
+        return values.allSatisfy { isTruthy($0) }
     }
 }
 
-/// Logical OR over an array of boolean values.
 final class OrFunction: SynchronousClientFunction {
     init() { super.init(name: "or") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         guard let values = args["values"] as? [Any] else { return false }
-        return values.contains { ($0 as? Bool) == true }
+        return values.contains { isTruthy($0) }
     }
 }
 
-/// Logical NOT.
 final class NotFunction: SynchronousClientFunction {
     init() { super.init(name: "not") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
@@ -201,4 +244,10 @@ final class NotFunction: SynchronousClientFunction {
         if let b = value as? Bool { return !b }
         return value == nil
     }
+}
+
+private func isTruthy(_ value: Any?) -> Bool {
+    if let b = value as? Bool { return b }
+    if value == nil { return false }
+    return true
 }
