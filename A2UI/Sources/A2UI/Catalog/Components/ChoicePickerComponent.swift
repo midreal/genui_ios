@@ -4,11 +4,13 @@ import Combine
 /// A selection component supporting single/multi-select with various display styles.
 ///
 /// Parameters:
-/// - `binding`: Data path for the selected value(s) — single string or string array.
-/// - `options`: Array of `{"label": "...", "value": "..."}` objects.
-/// - `label`: Optional group label.
-/// - `variant`: "mutuallyExclusive" (radio) or "multipleSelection" (checkbox). Default is multipleSelection.
-/// - `displayStyle`: "checkbox" (default) or "chips".
+/// - `value`: Data binding definition for the selected value(s).
+///   Also accepts legacy `binding` (string path).
+/// - `options`: Array of `{"label": "...", "value": "..."}`, or a data binding
+///   reference `{path: "..."}` for dynamic options.
+/// - `label`: Optional group label. Supports `stringReference` (data binding).
+/// - `variant`: `"mutuallyExclusive"` (radio) or `"multipleSelection"` (default).
+/// - `displayStyle`: `"checkbox"` (default) or `"chips"`.
 /// - `filterable`: Whether to show a search/filter field.
 /// - `checks`: Array of `{condition, message}` for validation.
 enum ChoicePickerComponent {
@@ -16,9 +18,10 @@ enum ChoicePickerComponent {
     static func register() -> CatalogItem {
         CatalogItem(name: "ChoicePicker", isImplicitlyFlexible: true) { context in
             let wrapper = BindableView()
-            let bindingPath = context.data["binding"] as? String
-            let options = context.data["options"] as? [JsonMap] ?? []
-            let labelText = context.data["label"] as? String
+            let valueDef = BoundValueHelpers.readValueDef(from: context.data)
+            let writablePath = BoundValueHelpers.extractWritablePath(valueDef)
+            let labelDef = context.data["label"]
+            let optionsDef = context.data["options"]
             let variant = context.data["variant"] as? String ?? "multipleSelection"
             let displayStyle = context.data["displayStyle"] as? String ?? "checkbox"
             let filterable = context.data["filterable"] as? Bool ?? false
@@ -32,12 +35,24 @@ enum ChoicePickerComponent {
             outerStack.spacing = 8
             wrapper.embed(outerStack)
 
-            if let text = labelText {
-                let label = UILabel()
-                label.text = text
-                label.font = .systemFont(ofSize: 15, weight: .medium)
-                label.textColor = .secondaryLabel
-                outerStack.addArrangedSubview(label)
+            // Label (static or dynamic)
+            let topLabel = UILabel()
+            topLabel.font = .systemFont(ofSize: 15, weight: .medium)
+            topLabel.textColor = .secondaryLabel
+            topLabel.isHidden = true
+            outerStack.addArrangedSubview(topLabel)
+
+            if let staticText = labelDef as? String {
+                topLabel.text = staticText
+                topLabel.isHidden = false
+            } else if labelDef is JsonMap {
+                topLabel.isHidden = false
+                let labelCancellable = BoundValueHelpers.resolveString(labelDef, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak topLabel] text in
+                        topLabel?.text = text ?? ""
+                    }
+                wrapper.storeCancellable(labelCancellable)
             }
 
             var filterText = ""
@@ -50,13 +65,15 @@ enum ChoicePickerComponent {
                 filterField.font = .systemFont(ofSize: 14)
                 outerStack.addArrangedSubview(filterField)
 
-                filterField.addAction(UIAction { [weak filterField] _ in
+                filterField.addAction(UIAction { [weak filterField, weak optionsContainer] _ in
                     filterText = filterField?.text ?? ""
-                    updateOptionViews(
-                        container: optionsContainer, options: options,
-                        selectedValues: currentSelections(context: context, path: bindingPath),
-                        filterText: filterText, isMutuallyExclusive: isMutuallyExclusive,
-                        isChips: isChips, context: context, bindingPath: bindingPath
+                    guard let container = optionsContainer else { return }
+                    let selections = currentSelections(writablePath: writablePath, dataContext: context.dataContext)
+                    rebuildOptions(
+                        container: container, options: resolvedStaticOptions(optionsDef),
+                        selectedValues: selections, filterText: filterText,
+                        isMutuallyExclusive: isMutuallyExclusive, isChips: isChips,
+                        writablePath: writablePath, dataContext: context.dataContext
                     )
                 }, for: .editingChanged)
             }
@@ -93,26 +110,55 @@ enum ChoicePickerComponent {
             errorLabel.isHidden = true
             outerStack.addArrangedSubview(errorLabel)
 
-            if let path = bindingPath {
-                let cancellable = context.dataContext.subscribe(pathString: path)
+            // Dynamic options via data binding
+            if let optionsMap = optionsDef as? JsonMap, (optionsMap["path"] != nil || optionsMap["call"] != nil) {
+                let optionsCancellable = BoundValueHelpers.resolveAny(optionsDef, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak optionsContainer] value in
+                        guard let container = optionsContainer else { return }
+                        let opts = (value as? [JsonMap]) ?? []
+                        let selections = currentSelections(writablePath: writablePath, dataContext: context.dataContext)
+                        rebuildOptions(
+                            container: container, options: opts,
+                            selectedValues: selections, filterText: filterText,
+                            isMutuallyExclusive: isMutuallyExclusive, isChips: isChips,
+                            writablePath: writablePath, dataContext: context.dataContext
+                        )
+                    }
+                wrapper.storeCancellable(optionsCancellable)
+            }
+
+            // Subscribe to value changes to refresh selection state
+            if let valueDef = valueDef {
+                let cancellable = BoundValueHelpers.resolveAny(valueDef, context: context.dataContext)
                     .receive(on: DispatchQueue.main)
                     .sink { [weak optionsContainer] _ in
                         guard let container = optionsContainer else { return }
-                        updateOptionViews(
-                            container: container, options: options,
-                            selectedValues: currentSelections(context: context, path: bindingPath),
-                            filterText: filterText, isMutuallyExclusive: isMutuallyExclusive,
-                            isChips: isChips, context: context, bindingPath: bindingPath
+                        let opts: [JsonMap]
+                        if let optionsMap = optionsDef as? JsonMap, (optionsMap["path"] != nil || optionsMap["call"] != nil) {
+                            return // dynamic options handle their own rebuild
+                        } else {
+                            opts = resolvedStaticOptions(optionsDef)
+                        }
+                        let selections = currentSelections(writablePath: writablePath, dataContext: context.dataContext)
+                        rebuildOptions(
+                            container: container, options: opts,
+                            selectedValues: selections, filterText: filterText,
+                            isMutuallyExclusive: isMutuallyExclusive, isChips: isChips,
+                            writablePath: writablePath, dataContext: context.dataContext
                         )
                     }
                 wrapper.storeCancellable(cancellable)
             }
 
-            updateOptionViews(
-                container: optionsContainer, options: options,
-                selectedValues: currentSelections(context: context, path: bindingPath),
-                filterText: filterText, isMutuallyExclusive: isMutuallyExclusive,
-                isChips: isChips, context: context, bindingPath: bindingPath
+            // Initial render
+            let initialOpts = resolvedStaticOptions(optionsDef)
+            let initialSelections = currentSelections(writablePath: writablePath, dataContext: context.dataContext)
+            rebuildOptions(
+                container: optionsContainer, options: initialOpts,
+                selectedValues: initialSelections, filterText: filterText,
+                isMutuallyExclusive: isMutuallyExclusive, isChips: isChips,
+                writablePath: writablePath, dataContext: context.dataContext
             )
 
             if let checks = checks, !checks.isEmpty {
@@ -129,27 +175,29 @@ enum ChoicePickerComponent {
         }
     }
 
-    private static func currentSelections(context: CatalogItemContext, path: String?) -> [String] {
-        guard let path = path else { return [] }
-        let value = context.dataContext.getValue(pathString: path)
-        if let arr = value as? [Any] {
-            return arr.map { "\($0)" }
-        }
-        if let str = value as? String {
-            return [str]
-        }
+    // MARK: - Helpers
+
+    private static func resolvedStaticOptions(_ optionsDef: Any?) -> [JsonMap] {
+        (optionsDef as? [JsonMap]) ?? []
+    }
+
+    private static func currentSelections(writablePath: String?, dataContext: DataContext) -> [String] {
+        guard let path = writablePath else { return [] }
+        let value = dataContext.getValue(pathString: path)
+        if let arr = value as? [Any] { return arr.map { "\($0)" } }
+        if let str = value as? String { return [str] }
         return []
     }
 
-    private static func updateOptionViews(
+    private static func rebuildOptions(
         container: UIStackView,
         options: [JsonMap],
         selectedValues: [String],
         filterText: String,
         isMutuallyExclusive: Bool,
         isChips: Bool,
-        context: CatalogItemContext,
-        bindingPath: String?
+        writablePath: String?,
+        dataContext: DataContext
     ) {
         container.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
@@ -171,7 +219,7 @@ enum ChoicePickerComponent {
                         toggleSelection(
                             value: optionValue, isSelected: !isSelected,
                             isMutuallyExclusive: isMutuallyExclusive,
-                            context: context, bindingPath: bindingPath
+                            writablePath: writablePath, dataContext: dataContext
                         )
                     }
                 )
@@ -180,8 +228,8 @@ enum ChoicePickerComponent {
                 let row = makeRadioRow(
                     label: optionLabel, isSelected: isSelected,
                     onTap: {
-                        guard let path = bindingPath else { return }
-                        context.dataContext.update(pathString: path, value: [optionValue])
+                        guard let path = writablePath else { return }
+                        dataContext.update(pathString: path, value: [optionValue])
                     }
                 )
                 container.addArrangedSubview(row)
@@ -192,7 +240,7 @@ enum ChoicePickerComponent {
                         toggleSelection(
                             value: optionValue, isSelected: !isSelected,
                             isMutuallyExclusive: false,
-                            context: context, bindingPath: bindingPath
+                            writablePath: writablePath, dataContext: dataContext
                         )
                     }
                 )
@@ -205,21 +253,21 @@ enum ChoicePickerComponent {
         value: String,
         isSelected: Bool,
         isMutuallyExclusive: Bool,
-        context: CatalogItemContext,
-        bindingPath: String?
+        writablePath: String?,
+        dataContext: DataContext
     ) {
-        guard let path = bindingPath else { return }
+        guard let path = writablePath else { return }
         if isMutuallyExclusive {
-            context.dataContext.update(pathString: path, value: [value])
+            dataContext.update(pathString: path, value: [value])
             return
         }
-        var current = currentSelections(context: context, path: path)
+        var current = currentSelections(writablePath: path, dataContext: dataContext)
         if isSelected {
             if !current.contains(value) { current.append(value) }
         } else {
             current.removeAll { $0 == value }
         }
-        context.dataContext.update(pathString: path, value: current)
+        dataContext.update(pathString: path, value: current)
     }
 
     // MARK: - UI Factories
@@ -266,10 +314,6 @@ enum ChoicePickerComponent {
         textLabel.text = label
         textLabel.font = .systemFont(ofSize: 15)
         stack.addArrangedSubview(textLabel)
-
-        let tap = UITapGestureRecognizer(target: nil, action: nil)
-        stack.addGestureRecognizer(tap)
-        stack.isUserInteractionEnabled = true
 
         let button = UIButton(type: .system)
         button.addAction(UIAction { _ in onTap() }, for: .touchUpInside)

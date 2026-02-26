@@ -5,13 +5,13 @@ import AVFoundation
 ///
 /// Parameters:
 /// - `url`: Audio file URL.
-/// - `title`: Display title (optional).
+/// - `description`: Display description (optional). Also accepts legacy `title`.
 enum AudioPlayerComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "AudioPlayer") { context in
             let urlStr = context.data["url"] as? String
-            let title = context.data["title"] as? String
+            let title = (context.data["description"] as? String) ?? (context.data["title"] as? String)
 
             let stack = UIStackView()
             stack.axis = .horizontal

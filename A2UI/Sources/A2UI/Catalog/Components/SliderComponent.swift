@@ -4,20 +4,22 @@ import Combine
 /// A slider control with two-way data binding.
 ///
 /// Parameters:
-/// - `binding`: Data path for the numeric value.
+/// - `value`: Data binding definition for the numeric value.
+///   Also accepts legacy `binding` (string path).
 /// - `min`: Minimum value (default 0).
 /// - `max`: Maximum value (default 100).
-/// - `label`: Optional label text.
+/// - `label`: Optional label text. Supports `stringReference` (data binding).
 /// - `checks`: Array of `{condition, message}` for validation.
 enum SliderComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "Slider") { context in
             let wrapper = BindableView()
-            let bindingPath = context.data["binding"] as? String
+            let valueDef = BoundValueHelpers.readValueDef(from: context.data)
+            let writablePath = BoundValueHelpers.extractWritablePath(valueDef)
             let minVal = (context.data["min"] as? NSNumber)?.floatValue ?? 0
             let maxVal = (context.data["max"] as? NSNumber)?.floatValue ?? 100
-            let labelText = context.data["label"] as? String
+            let labelDef = context.data["label"]
             let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
 
             let stack = UIStackView()
@@ -25,12 +27,24 @@ enum SliderComponent {
             stack.spacing = 4
             wrapper.embed(stack)
 
-            if let text = labelText {
-                let label = UILabel()
-                label.text = text
-                label.font = .systemFont(ofSize: 13, weight: .medium)
-                label.textColor = .secondaryLabel
-                stack.addArrangedSubview(label)
+            // Label (static or dynamic)
+            let topLabel = UILabel()
+            topLabel.font = .systemFont(ofSize: 13, weight: .medium)
+            topLabel.textColor = .secondaryLabel
+            topLabel.isHidden = true
+            stack.addArrangedSubview(topLabel)
+
+            if let staticText = labelDef as? String {
+                topLabel.text = staticText
+                topLabel.isHidden = false
+            } else if labelDef is JsonMap {
+                topLabel.isHidden = false
+                let labelCancellable = BoundValueHelpers.resolveString(labelDef, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak topLabel] text in
+                        topLabel?.text = text ?? ""
+                    }
+                wrapper.storeCancellable(labelCancellable)
             }
 
             let sliderStack = UIStackView()
@@ -57,14 +71,14 @@ enum SliderComponent {
             errorLabel.isHidden = true
             stack.addArrangedSubview(errorLabel)
 
-            if let path = bindingPath {
+            if let valueDef = valueDef {
                 var isUpdatingFromModel = false
 
-                let cancellable = context.dataContext.subscribe(pathString: path)
+                let cancellable = BoundValueHelpers.resolveNumber(valueDef, context: context.dataContext)
                     .receive(on: DispatchQueue.main)
                     .sink { [weak slider, weak valueLabel] value in
                         guard let slider = slider, let valueLabel = valueLabel else { return }
-                        let numValue = (value as? NSNumber)?.floatValue ?? 0
+                        let numValue = Float(value ?? 0)
                         isUpdatingFromModel = true
                         slider.value = numValue
                         valueLabel.text = String(format: "%.0f", numValue)
@@ -72,13 +86,15 @@ enum SliderComponent {
                     }
                 wrapper.storeCancellable(cancellable)
 
-                let dataCtx = context.dataContext
-                slider.addAction(UIAction { [weak slider, weak valueLabel] _ in
-                    guard !isUpdatingFromModel, let slider = slider else { return }
-                    let val = Double(slider.value)
-                    valueLabel?.text = String(format: "%.0f", val)
-                    dataCtx.update(pathString: path, value: val)
-                }, for: .valueChanged)
+                if let path = writablePath {
+                    let dataCtx = context.dataContext
+                    slider.addAction(UIAction { [weak slider, weak valueLabel] _ in
+                        guard !isUpdatingFromModel, let slider = slider else { return }
+                        let val = Double(slider.value)
+                        valueLabel?.text = String(format: "%.0f", val)
+                        dataCtx.update(pathString: path, value: val)
+                    }, for: .valueChanged)
+                }
             }
 
             if let checks = checks, !checks.isEmpty {

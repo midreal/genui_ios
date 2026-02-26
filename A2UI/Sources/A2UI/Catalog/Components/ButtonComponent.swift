@@ -42,8 +42,13 @@ enum ButtonComponent {
             let dispatch = context.dispatchEvent
             let dataCtx = context.dataContext
 
-            button.addAction(UIAction { _ in
-                handlePress(action: action, componentId: componentId, dispatch: dispatch, dataContext: dataCtx)
+            let reportErr = context.reportError
+            button.addAction(UIAction { [weak wrapper] _ in
+                handlePress(
+                    action: action, componentId: componentId,
+                    dispatch: dispatch, dataContext: dataCtx,
+                    reportError: reportErr, sourceView: wrapper
+                )
             }, for: .touchUpInside)
 
             wrapper.embed(button)
@@ -101,9 +106,16 @@ enum ButtonComponent {
         action: JsonMap?,
         componentId: String,
         dispatch: @escaping DispatchEventCallback,
-        dataContext: DataContext
+        dataContext: DataContext,
+        reportError: ((Error) -> Void)? = nil,
+        sourceView: UIView? = nil
     ) {
-        guard let action = action else { return }
+        guard let action = action else {
+            #if DEBUG
+            print("[A2UI] Button \(componentId): action is nil, nothing to do")
+            #endif
+            return
+        }
 
         if let eventMap = action["event"] as? JsonMap,
            let name = eventMap["name"] as? String {
@@ -124,13 +136,34 @@ enum ButtonComponent {
                 }
         } else if let funcMap = action["functionCall"] as? JsonMap {
             if let callName = funcMap["call"] as? String, callName == "closeModal" {
-                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let topVC = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController?.presentedViewController {
-                    topVC.dismiss(animated: true)
+                DispatchQueue.main.async {
+                    if let view = sourceView {
+                        var responder: UIResponder? = view
+                        while let next = responder?.next {
+                            if let vc = next as? UIViewController, vc.presentingViewController != nil {
+                                vc.dismiss(animated: true)
+                                return
+                            }
+                            responder = next
+                        }
+                    }
+                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let topVC = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController?.presentedViewController {
+                        topVC.dismiss(animated: true)
+                    }
                 }
                 return
             }
-            _ = dataContext.resolve(funcMap)
+            var cancellable: AnyCancellable?
+            cancellable = dataContext.resolve(funcMap)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveValue: { _ in
+                    _ = cancellable
+                })
+        } else {
+            #if DEBUG
+            print("[A2UI] Button \(componentId): action has neither 'event' nor 'functionCall'")
+            #endif
         }
     }
 }

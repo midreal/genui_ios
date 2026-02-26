@@ -11,13 +11,18 @@ enum TextComponent {
     static func register() -> CatalogItem {
         CatalogItem(name: "Text") { context in
             let wrapper = BindableView()
+            let variant = context.data["variant"] as? String ?? "body"
+            let vPadding = Self.verticalPadding(for: variant)
+
             let label = UILabel()
             label.numberOfLines = 0
             label.lineBreakMode = .byWordWrapping
-            wrapper.embed(label)
-
-            let variant = context.data["variant"] as? String ?? "body"
             label.font = Self.font(for: variant)
+            label.isUserInteractionEnabled = true
+
+            wrapper.embed(label, insets: UIEdgeInsets(
+                top: vPadding, left: 0, bottom: vPadding, right: 0
+            ))
 
             let textValue = context.data["text"]
             let cancellable = context.dataContext.resolve(textValue)
@@ -34,6 +39,18 @@ enum TextComponent {
             wrapper.storeCancellable(cancellable)
 
             return wrapper
+        }
+    }
+
+    /// Vertical padding per variant, matching Flutter's implementation.
+    private static func verticalPadding(for variant: String) -> CGFloat {
+        switch variant {
+        case "h1": return 20
+        case "h2": return 16
+        case "h3": return 12
+        case "h4": return 8
+        case "h5": return 4
+        default: return 0
         }
     }
 
@@ -150,15 +167,27 @@ enum TextComponent {
             }
         )
 
-        applyPattern(
-            attrStr, text: attrStr.string,
-            pattern: "\\[([^\\]]+)\\]\\(([^)]+)\\)",
-            transform: { _ in
-                [.foregroundColor: UIColor.systemBlue,
-                 .underlineStyle: NSUnderlineStyle.single.rawValue]
-            },
-            useGroup: 1
-        )
+        // Links: [text](url) — make tappable via NSAttributedString .link
+        if let regex = try? NSRegularExpression(pattern: "\\[([^\\]]+)\\]\\(([^)]+)\\)") {
+            let text = attrStr.string
+            let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+            for match in matches.reversed() {
+                guard let fullRange = Range(match.range, in: text),
+                      let textRange = Range(match.range(at: 1), in: text),
+                      let urlRange = Range(match.range(at: 2), in: text) else { continue }
+                let linkText = String(text[textRange])
+                let urlString = String(text[urlRange])
+                let replacement = NSMutableAttributedString(string: linkText, attributes: [
+                    .foregroundColor: UIColor.systemBlue,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                    .font: baseFont
+                ])
+                if let url = URL(string: urlString) {
+                    replacement.addAttribute(.link, value: url, range: NSRange(location: 0, length: linkText.count))
+                }
+                attrStr.replaceCharacters(in: NSRange(fullRange, in: text), with: replacement)
+            }
+        }
     }
 
     private static func applyPattern(

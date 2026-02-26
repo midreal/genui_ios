@@ -5,8 +5,11 @@ import Combine
 ///
 /// Parameters:
 /// - `url`: The image URL (literal or data binding).
-/// - `fit`: Content mode — "cover", "contain", "fill" (default "cover").
-/// - `variant`: Size/style hint — "icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header".
+/// - `fit`: Content mode — `"cover"`, `"contain"`, `"fill"`, `"fitWidth"`,
+///   `"fitHeight"`, `"none"`, `"scaleDown"` (default `"cover"`).
+/// - `variant`: Size/style hint — `"icon"`, `"avatar"`, `"smallFeature"`,
+///   `"mediumFeature"`, `"largeFeature"`, `"header"`.
+/// - `width` / `height`: Explicit size overrides.
 enum ImageComponent {
 
     static func register() -> CatalogItem {
@@ -26,6 +29,16 @@ enum ImageComponent {
                 imageView.layer.cornerRadius = size / 2
             }
 
+            // Loading indicator
+            let spinner = UIActivityIndicatorView(style: .medium)
+            spinner.translatesAutoresizingMaskIntoConstraints = false
+            spinner.hidesWhenStopped = true
+            imageView.addSubview(spinner)
+            NSLayoutConstraint.activate([
+                spinner.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+                spinner.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
+            ])
+
             if variant == "header" {
                 wrapper.embed(imageView)
             } else {
@@ -39,13 +52,13 @@ enum ImageComponent {
                 ])
             }
 
-            if let explicitWidth = context.data["width"] as? CGFloat {
-                let c = imageView.widthAnchor.constraint(equalToConstant: explicitWidth)
+            if let explicitWidth = (context.data["width"] as? NSNumber)?.doubleValue {
+                let c = imageView.widthAnchor.constraint(equalToConstant: CGFloat(explicitWidth))
                 c.priority = .required
                 c.isActive = true
             }
-            if let explicitHeight = context.data["height"] as? CGFloat {
-                let c = imageView.heightAnchor.constraint(equalToConstant: explicitHeight)
+            if let explicitHeight = (context.data["height"] as? NSNumber)?.doubleValue {
+                let c = imageView.heightAnchor.constraint(equalToConstant: CGFloat(explicitHeight))
                 c.priority = .required
                 c.isActive = true
             }
@@ -53,11 +66,17 @@ enum ImageComponent {
             let urlValue = context.data["url"]
             let cancellable = context.dataContext.resolve(urlValue)
                 .receive(on: DispatchQueue.main)
-                .sink { [weak imageView] value in
-                    guard let imageView = imageView,
-                          let urlStr = value as? String,
-                          let url = URL(string: urlStr) else { return }
-                    loadImage(url: url, into: imageView)
+                .sink { [weak imageView, weak spinner] value in
+                    guard let imageView = imageView else { return }
+                    guard let urlStr = value as? String,
+                          let url = URL(string: urlStr) else {
+                        showErrorIcon(in: imageView)
+                        return
+                    }
+                    spinner?.startAnimating()
+                    loadImage(url: url, into: imageView) {
+                        spinner?.stopAnimating()
+                    }
                 }
             wrapper.storeCancellable(cancellable)
 
@@ -77,18 +96,32 @@ enum ImageComponent {
 
     private static func parseContentMode(_ fit: String?) -> UIView.ContentMode {
         switch fit {
-        case "contain": return .scaleAspectFit
+        case "contain", "scaleDown": return .scaleAspectFit
         case "fill": return .scaleToFill
+        case "fitWidth": return .scaleAspectFit
+        case "fitHeight": return .scaleAspectFit
+        case "none": return .center
         default: return .scaleAspectFill
         }
     }
 
-    private static func loadImage(url: URL, into imageView: UIImageView) {
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data, let image = UIImage(data: data) else { return }
+    private static func showErrorIcon(in imageView: UIImageView) {
+        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+        imageView.image = UIImage(systemName: "photo.badge.exclamationmark", withConfiguration: config)
+        imageView.tintColor = .tertiaryLabel
+        imageView.contentMode = .center
+    }
+
+    private static func loadImage(url: URL, into imageView: UIImageView, completion: @escaping () -> Void) {
+        URLSession.shared.dataTask(with: url) { data, _, error in
             DispatchQueue.main.async {
-                UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve) {
-                    imageView.image = image
+                completion()
+                if let data = data, let image = UIImage(data: data) {
+                    UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve) {
+                        imageView.image = image
+                    }
+                } else {
+                    showErrorIcon(in: imageView)
                 }
             }
         }.resume()

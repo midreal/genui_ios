@@ -32,11 +32,11 @@ final class RequiredFunction: SynchronousClientFunction {
     init() { super.init(name: "required") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         let value = args["value"]
-        if value == nil { return "This field is required" }
-        if let str = value as? String, str.trimmingCharacters(in: .whitespaces).isEmpty {
-            return "This field is required"
-        }
-        return nil
+        if value == nil { return false }
+        if let str = value as? String { return !str.trimmingCharacters(in: .whitespaces).isEmpty }
+        if let arr = value as? [Any] { return !arr.isEmpty }
+        if let dict = value as? JsonMap { return !dict.isEmpty }
+        return true
     }
 }
 
@@ -44,13 +44,10 @@ final class RegexFunction: SynchronousClientFunction {
     init() { super.init(name: "regex") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
         guard let value = args["value"] as? String,
-              let pattern = args["pattern"] as? String else { return nil }
-        let regex = try? NSRegularExpression(pattern: pattern)
+              let pattern = args["pattern"] as? String else { return false }
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
         let range = NSRange(value.startIndex..., in: value)
-        if regex?.firstMatch(in: value, range: range) == nil {
-            return args["message"] as? String ?? "Invalid format"
-        }
-        return nil
+        return regex.firstMatch(in: value, range: range) != nil
     }
 }
 
@@ -81,33 +78,26 @@ final class LengthFunction: SynchronousClientFunction {
 final class NumericFunction: SynchronousClientFunction {
     init() { super.init(name: "numeric") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
-        guard let value = args["value"] else { return nil }
+        guard let value = args["value"] else { return false }
         let numValue: Double
         if let n = value as? NSNumber { numValue = n.doubleValue }
         else if let s = value as? String, let n = Double(s) { numValue = n }
-        else { return "Must be a number" }
+        else { return false }
 
-        if let min = (args["min"] as? NSNumber)?.doubleValue, numValue < min {
-            return "Must be at least \(min)"
-        }
-        if let max = (args["max"] as? NSNumber)?.doubleValue, numValue > max {
-            return "Must be at most \(max)"
-        }
-        return nil
+        if let min = (args["min"] as? NSNumber)?.doubleValue, numValue < min { return false }
+        if let max = (args["max"] as? NSNumber)?.doubleValue, numValue > max { return false }
+        return true
     }
 }
 
 final class EmailFunction: SynchronousClientFunction {
     init() { super.init(name: "email") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
-        guard let value = args["value"] as? String else { return nil }
+        guard let value = args["value"] as? String else { return false }
         let pattern = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let regex = try? NSRegularExpression(pattern: pattern)
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
         let range = NSRange(value.startIndex..., in: value)
-        if regex?.firstMatch(in: value, range: range) == nil {
-            return "Invalid email address"
-        }
-        return nil
+        return regex.firstMatch(in: value, range: range) != nil
     }
 }
 
@@ -190,17 +180,24 @@ final class FormatCurrencyFunction: SynchronousClientFunction {
 final class FormatDateFunction: SynchronousClientFunction {
     init() { super.init(name: "formatDate") }
     override func executeSync(args: JsonMap, context: DataContext) -> Any? {
-        guard let value = args["value"] as? String else { return args["value"] }
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let dateVal = args["value"]
         let date: Date?
-        date = isoFormatter.date(from: value) ?? {
-            let alt = ISO8601DateFormatter()
-            alt.formatOptions = [.withInternetDateTime]
-            return alt.date(from: value)
-        }()
 
-        guard let parsedDate = date else { return value }
+        if let ms = (dateVal as? NSNumber)?.intValue {
+            date = Date(timeIntervalSince1970: Double(ms) / 1000.0)
+        } else if let str = dateVal as? String {
+            let isoFormatter = ISO8601DateFormatter()
+            isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            date = isoFormatter.date(from: str) ?? {
+                let alt = ISO8601DateFormatter()
+                alt.formatOptions = [.withInternetDateTime]
+                return alt.date(from: str)
+            }()
+        } else {
+            return dateVal
+        }
+
+        guard let parsedDate = date else { return dateVal }
         let pattern = args["pattern"] as? String ?? "yyyy-MM-dd"
         let formatter = DateFormatter()
         formatter.dateFormat = pattern

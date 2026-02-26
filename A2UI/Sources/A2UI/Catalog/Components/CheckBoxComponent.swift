@@ -4,16 +4,18 @@ import Combine
 /// A boolean toggle (UISwitch) with two-way data binding.
 ///
 /// Parameters:
-/// - `binding`: Data path for the boolean value.
-/// - `label`: Optional text label displayed beside the switch.
+/// - `value`: Data binding definition for the boolean value.
+///   Also accepts legacy `binding` (string path).
+/// - `label`: Optional text label. Supports `stringReference` (data binding).
 /// - `checks`: Array of `{condition, message}` for validation.
 enum CheckBoxComponent {
 
     static func register() -> CatalogItem {
-        CatalogItem(name: "CheckBox", isImplicitlyFlexible: true) { context in
+        CatalogItem(name: "CheckBox") { context in
             let wrapper = BindableView()
-            let bindingPath = context.data["binding"] as? String
-            let labelText = context.data["label"] as? String
+            let valueDef = BoundValueHelpers.readValueDef(from: context.data)
+            let writablePath = BoundValueHelpers.extractWritablePath(valueDef)
+            let labelDef = context.data["label"]
             let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
 
             let outerStack = UIStackView()
@@ -30,11 +32,21 @@ enum CheckBoxComponent {
             let toggle = UISwitch()
             stack.addArrangedSubview(toggle)
 
-            if let text = labelText {
-                let label = UILabel()
-                label.text = text
-                label.font = .systemFont(ofSize: 15)
+            let label = UILabel()
+            label.font = .systemFont(ofSize: 15)
+            label.numberOfLines = 0
+
+            if let staticText = labelDef as? String {
+                label.text = staticText
                 stack.addArrangedSubview(label)
+            } else if labelDef is JsonMap {
+                stack.addArrangedSubview(label)
+                let labelCancellable = BoundValueHelpers.resolveString(labelDef, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak label] text in
+                        label?.text = text ?? ""
+                    }
+                wrapper.storeCancellable(labelCancellable)
             }
 
             let errorLabel = UILabel()
@@ -44,24 +56,26 @@ enum CheckBoxComponent {
             errorLabel.isHidden = true
             outerStack.addArrangedSubview(errorLabel)
 
-            if let path = bindingPath {
+            if let valueDef = valueDef {
                 var isUpdatingFromModel = false
 
-                let cancellable = context.dataContext.subscribe(pathString: path)
+                let cancellable = BoundValueHelpers.resolveBool(valueDef, context: context.dataContext)
                     .receive(on: DispatchQueue.main)
                     .sink { [weak toggle] value in
                         guard let toggle = toggle else { return }
                         isUpdatingFromModel = true
-                        toggle.isOn = value as? Bool ?? false
+                        toggle.isOn = value ?? false
                         isUpdatingFromModel = false
                     }
                 wrapper.storeCancellable(cancellable)
 
-                let dataCtx = context.dataContext
-                toggle.addAction(UIAction { [weak toggle] _ in
-                    guard !isUpdatingFromModel, let toggle = toggle else { return }
-                    dataCtx.update(pathString: path, value: toggle.isOn)
-                }, for: .valueChanged)
+                if let path = writablePath {
+                    let dataCtx = context.dataContext
+                    toggle.addAction(UIAction { [weak toggle] _ in
+                        guard !isUpdatingFromModel, let toggle = toggle else { return }
+                        dataCtx.update(pathString: path, value: toggle.isOn)
+                    }, for: .valueChanged)
+                }
             }
 
             if let checks = checks, !checks.isEmpty {

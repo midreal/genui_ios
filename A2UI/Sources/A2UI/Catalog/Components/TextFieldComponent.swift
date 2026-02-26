@@ -4,19 +4,21 @@ import Combine
 /// A text input field with two-way data binding.
 ///
 /// Parameters:
-/// - `binding`: Data path for two-way binding (e.g. "/search/query").
-/// - `label`: Placeholder label text.
-/// - `variant`: "shortText", "longText", "number", "obscured".
+/// - `value`: Data binding definition (literal, `{path: "..."}`, or `{call: ...}`).
+///   Also accepts legacy `binding` (string path) for backward compatibility.
+/// - `label`: Label/placeholder text. Supports `stringReference` (data binding).
+/// - `variant`: `"shortText"`, `"longText"`, `"number"`, `"obscured"`.
 /// - `checks`: Array of `{condition, message}` for validation.
 /// - `validationRegexp`: A regex pattern to validate input.
-/// - `onSubmittedAction`: Action to perform on submit (event or functionCall).
+/// - `onSubmittedAction`: Action to perform on submit (event / functionCall / closeModal).
 enum TextFieldComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "TextField", isImplicitlyFlexible: true) { context in
             let wrapper = BindableView()
-            let bindingPath = context.data["binding"] as? String
-            let label = context.data["label"] as? String ?? ""
+            let valueDef = BoundValueHelpers.readValueDef(from: context.data)
+            let writablePath = BoundValueHelpers.extractWritablePath(valueDef)
+            let labelDef = context.data["label"]
             let variant = context.data["variant"] as? String ?? "shortText"
             let checks = (context.data["checks"] as? [Any])?.compactMap { $0 as? JsonMap }
             let validationRegexp = context.data["validationRegexp"] as? String
@@ -26,16 +28,21 @@ enum TextFieldComponent {
 
             if isMultiline {
                 return buildMultiline(
-                    context: context, wrapper: wrapper, bindingPath: bindingPath,
-                    placeholder: label, checks: checks
+                    context: context, wrapper: wrapper,
+                    valueDef: valueDef, writablePath: writablePath,
+                    labelDef: labelDef, checks: checks
                 )
             }
 
             let textField = UITextField()
-            textField.placeholder = label
             textField.borderStyle = .roundedRect
             textField.font = .systemFont(ofSize: 15)
             textField.translatesAutoresizingMaskIntoConstraints = false
+
+            // Static label fallback
+            if let staticLabel = labelDef as? String {
+                textField.placeholder = staticLabel
+            }
 
             switch variant {
             case "number":
@@ -59,55 +66,63 @@ enum TextFieldComponent {
             errorLabel.isHidden = true
             stack.addArrangedSubview(errorLabel)
 
-            if let path = bindingPath {
+            // Dynamic label binding
+            if labelDef is JsonMap {
+                let labelCancellable = BoundValueHelpers.resolveString(labelDef, context: context.dataContext)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak textField] text in
+                        textField?.placeholder = text ?? ""
+                    }
+                wrapper.storeCancellable(labelCancellable)
+            }
+
+            // Two-way value binding
+            if let valueDef = valueDef {
                 var isUpdatingFromModel = false
 
-                let cancellable = context.dataContext.subscribe(pathString: path)
+                let cancellable = BoundValueHelpers.resolveString(valueDef, context: context.dataContext)
                     .receive(on: DispatchQueue.main)
                     .sink { [weak textField] value in
-                        guard let textField = textField, !textField.isFirstResponder else {
-                            if !isUpdatingFromModel {
-                                isUpdatingFromModel = true
-                                textField?.text = value as? String ?? ""
-                                isUpdatingFromModel = false
-                            }
-                            return
-                        }
+                        guard let textField = textField else { return }
+                        guard !textField.isFirstResponder else { return }
                         isUpdatingFromModel = true
-                        textField.text = value as? String ?? ""
+                        textField.text = value ?? ""
                         isUpdatingFromModel = false
                     }
                 wrapper.storeCancellable(cancellable)
 
-                let dataCtx = context.dataContext
-                let componentId = context.id
-                let dispatch = context.dispatchEvent
+                if let path = writablePath {
+                    let dataCtx = context.dataContext
+                    let componentId = context.id
+                    let dispatch = context.dispatchEvent
 
-                textField.addAction(UIAction { [weak textField] _ in
-                    guard !isUpdatingFromModel else { return }
-                    let newValue = textField?.text ?? ""
-                    if variant == "number", let num = Double(newValue) {
-                        dataCtx.update(pathString: path, value: num)
-                    } else {
-                        dataCtx.update(pathString: path, value: newValue)
+                    textField.addAction(UIAction { [weak textField] _ in
+                        guard !isUpdatingFromModel else { return }
+                        let newValue = textField?.text ?? ""
+                        if variant == "number", let num = Double(newValue) {
+                            dataCtx.update(pathString: path, value: num)
+                        } else {
+                            dataCtx.update(pathString: path, value: newValue)
+                        }
+
+                        if let pattern = validationRegexp {
+                            let regex = try? NSRegularExpression(pattern: pattern)
+                            let range = NSRange(newValue.startIndex..., in: newValue)
+                            let valid = regex?.firstMatch(in: newValue, range: range) != nil
+                            errorLabel.text = valid ? nil : "Invalid format"
+                            errorLabel.isHidden = valid
+                        }
+                    }, for: .editingChanged)
+
+                    if let submitAction = onSubmittedAction {
+                        textField.addAction(UIAction { _ in
+                            ButtonComponent.triggerAction(
+                                action: submitAction, componentId: componentId,
+                                dispatch: dispatch, dataContext: dataCtx,
+                                sourceView: wrapper
+                            )
+                        }, for: .editingDidEndOnExit)
                     }
-
-                    if let pattern = validationRegexp {
-                        let regex = try? NSRegularExpression(pattern: pattern)
-                        let range = NSRange(newValue.startIndex..., in: newValue)
-                        let valid = regex?.firstMatch(in: newValue, range: range) != nil
-                        errorLabel.text = valid ? nil : "Invalid format"
-                        errorLabel.isHidden = valid
-                    }
-                }, for: .editingChanged)
-
-                if let submitAction = onSubmittedAction {
-                    textField.addAction(UIAction { _ in
-                        ButtonComponent.triggerAction(
-                            action: submitAction, componentId: componentId,
-                            dispatch: dispatch, dataContext: dataCtx
-                        )
-                    }, for: .editingDidEndOnExit)
                 }
             }
 
@@ -128,14 +143,35 @@ enum TextFieldComponent {
     private static func buildMultiline(
         context: CatalogItemContext,
         wrapper: BindableView,
-        bindingPath: String?,
-        placeholder: String,
+        valueDef: Any?,
+        writablePath: String?,
+        labelDef: Any?,
         checks: [JsonMap]?
     ) -> UIView {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 4
         wrapper.embed(stack)
+
+        // Optional label above the text view
+        let topLabel = UILabel()
+        topLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        topLabel.textColor = .secondaryLabel
+        topLabel.isHidden = true
+        stack.addArrangedSubview(topLabel)
+
+        if let staticLabel = labelDef as? String {
+            topLabel.text = staticLabel
+            topLabel.isHidden = false
+        } else if labelDef is JsonMap {
+            let labelCancellable = BoundValueHelpers.resolveString(labelDef, context: context.dataContext)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak topLabel] text in
+                    topLabel?.text = text
+                    topLabel?.isHidden = (text == nil || text?.isEmpty == true)
+                }
+            wrapper.storeCancellable(labelCancellable)
+        }
 
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 15)
@@ -155,12 +191,12 @@ enum TextFieldComponent {
         errorLabel.isHidden = true
         stack.addArrangedSubview(errorLabel)
 
-        if let path = bindingPath {
-            let cancellable = context.dataContext.subscribe(pathString: path)
+        if let valueDef = valueDef {
+            let cancellable = BoundValueHelpers.resolveString(valueDef, context: context.dataContext)
                 .receive(on: DispatchQueue.main)
                 .sink { [weak textView] value in
                     guard let textView = textView, !textView.isFirstResponder else { return }
-                    textView.text = value as? String ?? ""
+                    textView.text = value ?? ""
                 }
             wrapper.storeCancellable(cancellable)
         }
@@ -179,13 +215,15 @@ enum TextFieldComponent {
     }
 }
 
-// Helper extension so TextField can reuse Button action handling for onSubmittedAction
 extension ButtonComponent {
+    /// Shared action handler for Button and TextField onSubmittedAction.
+    /// Supports `event`, `functionCall`, and `closeModal`.
     static func triggerAction(
         action: JsonMap,
         componentId: String,
         dispatch: @escaping DispatchEventCallback,
-        dataContext: DataContext
+        dataContext: DataContext,
+        sourceView: UIView? = nil
     ) {
         if let eventMap = action["event"] as? JsonMap,
            let name = eventMap["name"] as? String {
@@ -204,7 +242,20 @@ extension ButtonComponent {
                     _ = cancellable
                 }
         } else if let funcMap = action["functionCall"] as? JsonMap {
-            _ = dataContext.resolve(funcMap)
+            if funcMap["call"] as? String == "closeModal" {
+                DispatchQueue.main.async {
+                    var responder: UIResponder? = sourceView
+                    while let next = responder?.next {
+                        if let vc = next as? UIViewController, vc.presentingViewController != nil {
+                            vc.dismiss(animated: true)
+                            return
+                        }
+                        responder = next
+                    }
+                }
+            } else {
+                _ = dataContext.resolve(funcMap)
+            }
         }
     }
 }
