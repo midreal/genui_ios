@@ -13,26 +13,38 @@ enum ButtonComponent {
     static func register() -> CatalogItem {
         CatalogItem(name: "Button") { context in
             let wrapper = BindableView()
-            let button = UIButton(type: .system)
+            let variant = context.data["variant"] as? String ?? ""
+            let config = makeConfiguration(variant: variant)
+            let button = UIButton(configuration: config)
             button.translatesAutoresizingMaskIntoConstraints = false
 
-            let variant = context.data["variant"] as? String ?? ""
-            configureStyle(button, variant: variant)
-
             if let childId = context.data["child"] as? String {
-                let childView = context.buildChild(childId, nil)
-                if let label = findLabel(in: childView) {
-                    button.setTitle(label.text, for: .normal)
-                    if let attrText = label.attributedText {
-                        button.setAttributedTitle(attrText, for: .normal)
-                    }
+                if let childComp = context.getComponent(childId),
+                   childComp.type == "Text" {
+                    let textValue = childComp.properties["text"]
+                    let cancellable = context.dataContext.resolve(textValue)
+                        .receive(on: DispatchQueue.main)
+                        .sink { [weak button] value in
+                            guard let button = button else { return }
+                            let text = (value as? String) ?? "\(value ?? "")"
+                            if TextComponent.containsMarkdown(text) {
+                                let rendered = TextComponent.renderMarkdown(text, variant: "body")
+                                button.configuration?.attributedTitle = AttributedString(rendered)
+                            } else {
+                                button.configuration?.title = text
+                            }
+                        }
+                    wrapper.storeCancellable(cancellable)
                 } else {
+                    let childView = context.buildChild(childId, nil)
+                    childView.isUserInteractionEnabled = false
                     button.addSubview(childView)
                     childView.translatesAutoresizingMaskIntoConstraints = false
-                    childView.isUserInteractionEnabled = false
                     NSLayoutConstraint.activate([
-                        childView.centerXAnchor.constraint(equalTo: button.centerXAnchor),
-                        childView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+                        childView.topAnchor.constraint(equalTo: button.topAnchor, constant: 10),
+                        childView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -10),
+                        childView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 20),
+                        childView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -20),
                     ])
                 }
             }
@@ -59,7 +71,6 @@ enum ButtonComponent {
                     .receive(on: DispatchQueue.main)
                     .sink { [weak button] errorMessage in
                         button?.isEnabled = (errorMessage == nil)
-                        button?.alpha = (errorMessage == nil) ? 1.0 : 0.5
                     }
                 wrapper.storeCancellable(cancellable)
             }
@@ -68,38 +79,28 @@ enum ButtonComponent {
         }
     }
 
-    private static func configureStyle(_ button: UIButton, variant: String) {
-        button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
-        button.layer.cornerRadius = 8
-        button.clipsToBounds = true
-
+    private static func makeConfiguration(variant: String) -> UIButton.Configuration {
+        let insets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
         switch variant {
         case "primary":
-            button.backgroundColor = .systemBlue
-            button.setTitleColor(.white, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+            var config = UIButton.Configuration.filled()
+            config.baseBackgroundColor = .systemBlue
+            config.baseForegroundColor = .white
+            config.cornerStyle = .medium
+            config.contentInsets = insets
+            return config
         case "borderless":
-            button.backgroundColor = .clear
-            button.setTitleColor(.systemBlue, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+            var config = UIButton.Configuration.plain()
+            config.baseForegroundColor = .systemBlue
+            config.contentInsets = insets
+            return config
         default:
-            button.backgroundColor = .secondarySystemBackground
-            button.setTitleColor(.label, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+            var config = UIButton.Configuration.gray()
+            config.baseForegroundColor = .label
+            config.cornerStyle = .medium
+            config.contentInsets = insets
+            return config
         }
-    }
-
-    private static func findLabel(in view: UIView) -> UILabel? {
-        if let label = view as? UILabel { return label }
-        if let wrapper = view as? BindableView {
-            for sub in wrapper.subviews {
-                if let label = findLabel(in: sub) { return label }
-            }
-        }
-        for sub in view.subviews {
-            if let label = findLabel(in: sub) { return label }
-        }
-        return nil
     }
 
     private static func handlePress(

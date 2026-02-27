@@ -147,6 +147,12 @@ public enum A2UIMessageV08Adapter {
         for (key, value) in props {
             result[key] = convertPropertyValue(value, key: key)
         }
+
+        if let primary = result["primary"] as? Bool, primary, result["variant"] == nil {
+            result["variant"] = "primary"
+            result.removeValue(forKey: "primary")
+        }
+
         return result
     }
 

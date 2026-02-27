@@ -66,7 +66,7 @@ enum TextComponent {
         }
     }
 
-    private static func containsMarkdown(_ text: String) -> Bool {
+    static func containsMarkdown(_ text: String) -> Bool {
         text.contains("**") || text.contains("*") || text.contains("#") ||
         text.contains("[") || text.contains("`") || text.contains("- ") ||
         text.contains("1. ")
