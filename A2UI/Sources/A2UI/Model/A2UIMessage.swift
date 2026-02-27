@@ -1,9 +1,10 @@
 import Foundation
 
-/// A message in the A2UI protocol stream (v0.9).
+/// A message in the A2UI protocol stream.
 ///
-/// Each message must contain `"version": "v0.9"` and exactly one action key:
-/// `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`.
+/// Supports both v0.9 (draft) and v0.8 (stable) protocol formats.
+/// v0.9 messages must contain `"version": "v0.9"` and use `createSurface`/`updateComponents`/etc.
+/// v0.8 messages have no `version` field and use `beginRendering`/`surfaceUpdate`/etc.
 public enum A2UIMessage {
     case createSurface(CreateSurfacePayload)
     case updateComponents(UpdateComponentsPayload)
@@ -21,13 +22,32 @@ public enum A2UIMessage {
     }
 
     /// Parses an `A2UIMessage` from a JSON dictionary.
+    ///
+    /// Automatically detects the protocol version:
+    /// - If `"version": "v0.9"` is present, parses as v0.9.
+    /// - If no `version` field and v0.8 keys are found, parses as v0.8 via adapter.
     public static func fromJSON(_ json: JsonMap) throws -> A2UIMessage {
-        guard let version = json["version"] as? String, version == a2uiProtocolVersion else {
-            throw A2UIValidationError(
-                message: "A2UI message must have version \"\(a2uiProtocolVersion)\""
-            )
+        if let version = json["version"] as? String {
+            guard version == a2uiProtocolVersion else {
+                throw A2UIValidationError(
+                    message: "Unsupported A2UI version \"\(version)\", expected \"\(a2uiProtocolVersion)\""
+                )
+            }
+            return try parseV09(json)
         }
 
+        if A2UIMessageV08Adapter.isV08Message(json) {
+            return try A2UIMessageV08Adapter.convert(json)
+        }
+
+        throw A2UIValidationError(
+            message: "Unknown A2UI message format. Expected v0.9 (with version field) "
+                   + "or v0.8 (beginRendering/surfaceUpdate/dataModelUpdate): \(Array(json.keys))"
+        )
+    }
+
+    /// Parses a v0.9 format message (version field already validated).
+    static func parseV09(_ json: JsonMap) throws -> A2UIMessage {
         if let data = json["createSurface"] as? JsonMap {
             return .createSurface(try CreateSurfacePayload.fromJSON(data))
         }
@@ -44,7 +64,7 @@ public enum A2UIMessage {
             return .deleteSurface(surfaceId: sid)
         }
 
-        throw A2UIValidationError(message: "Unknown A2UI message type: \(Array(json.keys))")
+        throw A2UIValidationError(message: "Unknown A2UI v0.9 message type: \(Array(json.keys))")
     }
 }
 
@@ -55,12 +75,22 @@ public struct CreateSurfacePayload {
     public let catalogId: String
     public let theme: JsonMap?
     public let sendDataModel: Bool
+    /// The ID of the root component. In v0.9 this is always "root" by convention;
+    /// in v0.8 it can be any component ID specified by `beginRendering.root`.
+    public let rootComponentId: String?
 
-    public init(surfaceId: String, catalogId: String, theme: JsonMap? = nil, sendDataModel: Bool = false) {
+    public init(
+        surfaceId: String,
+        catalogId: String,
+        theme: JsonMap? = nil,
+        sendDataModel: Bool = false,
+        rootComponentId: String? = nil
+    ) {
         self.surfaceId = surfaceId
         self.catalogId = catalogId
         self.theme = theme
         self.sendDataModel = sendDataModel
+        self.rootComponentId = rootComponentId
     }
 
     public static func fromJSON(_ json: JsonMap) throws -> CreateSurfacePayload {
@@ -74,7 +104,8 @@ public struct CreateSurfacePayload {
             surfaceId: surfaceId,
             catalogId: catalogId,
             theme: json["theme"] as? JsonMap,
-            sendDataModel: json["sendDataModel"] as? Bool ?? false
+            sendDataModel: json["sendDataModel"] as? Bool ?? false,
+            rootComponentId: nil
         )
     }
 }

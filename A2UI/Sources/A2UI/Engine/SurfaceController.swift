@@ -86,7 +86,8 @@ public final class SurfaceController {
         let existing = registry.getSurface(id: surfaceId)
         let definition = (existing ?? SurfaceDefinition(surfaceId: surfaceId)).copy(
             catalogId: payload.catalogId,
-            theme: payload.theme
+            theme: payload.theme,
+            rootComponentId: payload.rootComponentId
         )
 
         if payload.sendDataModel {

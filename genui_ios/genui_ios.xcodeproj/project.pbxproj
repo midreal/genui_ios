@@ -64,7 +64,6 @@
 				9EDA1F8BA39A988C72D363CD /* Pods-genui_ios.debug.xcconfig */,
 				D54B0B42D60A0D9C500379BE /* Pods-genui_ios.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

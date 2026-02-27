@@ -45,7 +45,8 @@ public final class SurfaceView: UIView {
         currentContentView = nil
 
         guard let definition = definition else { return }
-        guard definition.components.keys.contains("root") else { return }
+        let rootId = definition.rootComponentId
+        guard definition.components.keys.contains(rootId) else { return }
         guard let catalog = surfaceContext.catalog else {
             let errorLabel = UILabel()
             errorLabel.text = "Catalog not found: \(definition.catalogId)"
@@ -63,7 +64,7 @@ public final class SurfaceView: UIView {
         let rootView = buildView(
             definition: definition,
             catalog: catalog,
-            widgetId: "root",
+            widgetId: rootId,
             dataContext: rootDataContext
         )
         embed(rootView)
