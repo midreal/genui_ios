@@ -57,7 +57,19 @@ enum CardComponent {
                 }
             }
 
-            return card
+            let margin: CGFloat = 4
+            let wrapper = UIView()
+            wrapper.backgroundColor = .clear
+            wrapper.addSubview(card)
+            card.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                card.topAnchor.constraint(equalTo: wrapper.topAnchor, constant: margin),
+                card.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor, constant: margin),
+                card.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor, constant: -margin),
+                card.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -margin)
+            ])
+
+            return wrapper
         }
     }
 }

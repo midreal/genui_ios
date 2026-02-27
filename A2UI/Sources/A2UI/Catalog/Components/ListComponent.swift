@@ -7,6 +7,22 @@ import Combine
 /// - `children`: Array of child IDs, or template `{"componentId": "...", "path": "..."}`.
 /// - `direction`: `"vertical"` (default) or `"horizontal"`.
 /// - `align`: Cross axis alignment — `"start"`, `"center"` (default), `"end"`, `"stretch"`.
+/// A UIScrollView subclass whose intrinsic content size tracks its content size,
+/// so Auto Layout can give it a natural height inside UIStackView containers.
+private final class AutoSizingScrollView: UIScrollView {
+    override var contentSize: CGSize {
+        didSet {
+            if contentSize != oldValue {
+                invalidateIntrinsicContentSize()
+            }
+        }
+    }
+
+    override var intrinsicContentSize: CGSize {
+        contentSize
+    }
+}
+
 enum ListComponent {
 
     static func register() -> CatalogItem {
@@ -54,7 +70,7 @@ enum ListComponent {
         case "start": stack.alignment = .leading
         case "end": stack.alignment = .trailing
         case "stretch": stack.alignment = .fill
-        default: stack.alignment = .center
+        default: stack.alignment = .fill
         }
 
         scrollView.addSubview(stack)
@@ -82,7 +98,7 @@ enum ListComponent {
         isHorizontal: Bool,
         align: String
     ) -> UIView {
-        let scrollView = UIScrollView()
+        let scrollView = AutoSizingScrollView()
         let stack = UIStackView()
         configureScrollAndStack(scrollView: scrollView, stack: stack, isHorizontal: isHorizontal, align: align)
 
@@ -102,7 +118,7 @@ enum ListComponent {
         align: String
     ) -> UIView {
         let wrapper = BindableView()
-        let scrollView = UIScrollView()
+        let scrollView = AutoSizingScrollView()
         wrapper.embed(scrollView)
 
         let stack = UIStackView()
@@ -114,19 +130,18 @@ enum ListComponent {
                 guard let stack = stack else { return }
                 stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-                let items: [Any]
                 if let arr = value as? [Any] {
-                    items = arr
+                    for (index, _) in arr.enumerated() {
+                        let nestedCtx = context.dataContext.nested("\(path)/\(index)")
+                        let childView = context.buildChild(componentId, nestedCtx)
+                        stack.addArrangedSubview(childView)
+                    }
                 } else if let dict = value as? JsonMap {
-                    items = Array(dict.keys)
-                } else {
-                    return
-                }
-
-                for (index, _) in items.enumerated() {
-                    let nestedCtx = context.dataContext.nested("\(path)/\(index)")
-                    let childView = context.buildChild(componentId, nestedCtx)
-                    stack.addArrangedSubview(childView)
+                    for key in dict.keys.sorted() {
+                        let nestedCtx = context.dataContext.nested("\(path)/\(key)")
+                        let childView = context.buildChild(componentId, nestedCtx)
+                        stack.addArrangedSubview(childView)
+                    }
                 }
             }
         wrapper.storeCancellable(cancellable)

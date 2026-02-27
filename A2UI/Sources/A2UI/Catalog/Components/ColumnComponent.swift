@@ -81,22 +81,25 @@ enum LayoutComponent {
                     guard let stackView = stackView else { return }
                     stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-                    let items: [Any]
+                    var childViews: [UIView] = []
                     if let arr = value as? [Any] {
-                        items = arr
+                        for (index, _) in arr.enumerated() {
+                            let nestedCtx = context.dataContext.nested("\(pathStr)/\(index)")
+                            let childView = buildWeightedChild(
+                                childId: componentId, context: context, dataContext: nestedCtx
+                            )
+                            childViews.append(childView)
+                        }
                     } else if let dict = value as? JsonMap {
-                        items = Array(dict.keys)
+                        for key in dict.keys.sorted() {
+                            let nestedCtx = context.dataContext.nested("\(pathStr)/\(key)")
+                            let childView = buildWeightedChild(
+                                childId: componentId, context: context, dataContext: nestedCtx
+                            )
+                            childViews.append(childView)
+                        }
                     } else {
                         return
-                    }
-
-                    var childViews: [UIView] = []
-                    for (index, _) in items.enumerated() {
-                        let nestedCtx = context.dataContext.nested("\(pathStr)/\(index)")
-                        let childView = buildWeightedChild(
-                            childId: componentId, context: context, dataContext: nestedCtx
-                        )
-                        childViews.append(childView)
                     }
 
                     if useSpacers {
