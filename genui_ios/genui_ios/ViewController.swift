@@ -7,12 +7,8 @@ class ViewController: UITableViewController {
         ("Component Gallery", "All 18 components with JSON viewer", ComponentGalleryVC.self),
         ("JSON Playground", "Input JSON and render live", JSONPlaygroundVC.self),
         ("Chat Demo", "AI chat with mock backend", ChatDemoVC.self),
-        ("Static Render", "SurfaceView recursive rendering", StaticRenderDemoVC.self),
-        ("Data Binding", "Two-way DataModel ↔ UI binding", DataBindingDemoVC.self),
-        ("JSON Parsing", "A2UI JSON → Engine → Render pipeline", JSONParsingDemoVC.self),
         ("Streaming", "MockTransport simulated streaming", StreamingDemoVC.self),
         ("Interactive", "Full interaction loop with events", InteractiveDemoVC.self),
-        ("v0.8 Compatibility", "Protocol v0.8 compatibility test suite", V08CompatibilityTestVC.self),
     ]
 
     override func viewDidLoad() {

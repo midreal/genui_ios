@@ -3,6 +3,10 @@ platform :ios, '15.0'
 target 'genui_ios' do
   use_frameworks! :linkage => :static
   pod 'A2UI', :path => '../A2UI'
+
+  target 'A2UITests' do
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|
