@@ -20,6 +20,7 @@ public enum BasicCatalog {
         [
             // Core display
             TextComponent.register(),
+            LabelComponent.register(),
             ButtonComponent.register(),
             // Layout
             ColumnComponent.register(),
@@ -33,13 +34,37 @@ public enum BasicCatalog {
             SliderComponent.register(),
             ChoicePickerComponent.register(),
             DateTimeInputComponent.register(),
+            // Selection components
+            SelectionListComponent.register(),
+            SelectionGridComponent.register(),
+            SelectionWrapComponent.register(),
+            OrderedSelectionListComponent.register(),
+            ActionSelectionListComponent.register(),
+            DropdownSelectionComponent.register(),
+            // Macaron display
+            CircularProgressComponent.register(),
+            LinearProgressComponent.register(),
+            RatingComponent.register(),
+            TagTextComponent.register(),
+            FilterTagsComponent.register(),
+            TickSliderComponent.register(),
+            MapComponent.register(),
+            MarkdownViewComponent.register(),
+            OrderedDisplayListComponent.register(),
+            // Macaron pickers
+            RollPickerComponent.register(),
+            RollPickerComponent.registerCard(),
+            PasswordKeypadComponent.register(),
+            // Logic
+            BooleanAllOfComponent.register(),
             // Advanced
             ListComponent.register(),
             TabsComponent.register(),
+            CarouselComponent.register(),
             ModalComponent.register(),
+            FullScreenModalComponent.register(),
             ImageComponent.register(),
-            AudioPlayerComponent.register(),
-            VideoComponent.register(),
+            PhotoInputComponent.register(),
         ]
     }
 }

@@ -1,0 +1,237 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "subscription-picker-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "subscription-picker-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "header-group",
+                  "plan-selector",
+                  "confirm-button"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "header-group",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["title-text", "subtitle-text"]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Choose your plan" },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle-text",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Select the plan that works best for you. You can upgrade anytime." },
+              "color": "secondary",
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "plan-selector",
+          "component": {
+            "SelectionList": {
+              "selection": { "path": "/selectedPlans", "literalArray": [] },
+              "maxSelection": 3,
+              "requiredSelection": 2,
+              "hasSelection": { "path": "/canConfirm", "literalBoolean": false },
+              "items": [
+                { "value": "free",       "child": "plan-free" },
+                { "value": "pro",        "child": "plan-pro" },
+                { "value": "team",       "child": "plan-team" },
+                { "value": "enterprise", "child": "plan-enterprise" }
+              ]
+            }
+          }
+        },
+        {
+          "id": "plan-free",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["free-title", "free-desc"]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "free-title",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Free" },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "free-desc",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Basic features, 1 project, community support" },
+              "color": "secondary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "plan-pro",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["pro-title", "pro-desc"]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "pro-title",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Pro — $12/mo" },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "pro-desc",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Unlimited projects, priority support, advanced analytics" },
+              "color": "secondary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "plan-team",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["team-title", "team-desc"]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "team-title",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Team — $29/mo" },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "team-desc",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Up to 10 members, shared workspace, admin controls" },
+              "color": "secondary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "plan-enterprise",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["ent-title", "ent-desc"]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "ent-title",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Enterprise — Custom" },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "ent-desc",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Unlimited members, SSO, dedicated support, SLA" },
+              "color": "secondary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "btn-label",
+              "style": "primary",
+              "enabled": { "path": "/canConfirm" },
+              "action": {
+                "name": "confirmPlan",
+                "context": [
+                  { "key": "plans", "value": { "path": "/selectedPlans" } }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "btn-label",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Continue" },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "subscription-picker-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

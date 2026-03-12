@@ -1,0 +1,54 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "roll-picker-card-single-selected-surface",
+      "root": "root"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "roll-picker-card-single-selected-surface",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "RollPickerCard": {
+              "columns": [
+                {
+                  "title": "Cuisine",
+                  "items": ["Fast food", "BBQ", "Spicy"]
+                }
+              ],
+              "selection": {
+                "path": "/selection",
+                "literalArray": ["Spicy"]
+              },
+              "hasCustomSelection": {
+                "path": "/hasCustomSelection",
+                "literalBoolean": true
+              },
+              "action": {
+                "name": "submit_roll_picker",
+                "context": [
+                  {
+                    "key": "flow",
+                    "value": {
+                      "literalString": "single_selected_demo"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "roll-picker-card-single-selected-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

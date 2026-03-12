@@ -1,0 +1,254 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "circular-progress-health-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "circular-progress-health-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "health-progress",
+                  "health-summary",
+                  "fiber-row",
+                  "net-carbs-row",
+                  "sugar-row",
+                  "sodium-row"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "health-progress",
+          "component": {
+            "CircularProgress": {
+              "value": {
+                "literalNumber": 7
+              },
+              "max": {
+                "literalNumber": 10
+              },
+              "style": "positive"
+            }
+          }
+        },
+        {
+          "id": "health-summary",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "health-title",
+                  "health-status"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "health-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Health . scroe"
+              },
+              "color": "tertiary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "health-status",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Good"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "fiber-row",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "fiber-label",
+                  "fiber-value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "fiber-label",
+          "weight": 1,
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Fiber"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "fiber-value",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "3g"
+              },
+              "color": "secondary",
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "net-carbs-row",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "net-carbs-label",
+                  "net-carbs-value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "net-carbs-label",
+          "weight": 1,
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Net Carbs"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "net-carbs-value",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "64g"
+              },
+              "color": "secondary",
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "sugar-row",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "sugar-label",
+                  "sugar-value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "sugar-label",
+          "weight": 1,
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Sugar"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "sugar-value",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "17g"
+              },
+              "color": "secondary",
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "sodium-row",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "sodium-label",
+                  "sodium-value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "sodium-label",
+          "weight": 1,
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Sodium"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "sodium-value",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "1124mg"
+              },
+              "color": "secondary",
+              "variant": "bodySans"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "circular-progress-health-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

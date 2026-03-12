@@ -1,0 +1,21 @@
+[
+  {"beginRendering": {"surfaceId": "travel-plan-card", "root": "root-card"}},
+  {"surfaceUpdate": {"surfaceId": "travel-plan-card", "components": [
+    {"id": "root-card", "component": {"Card": {"child": "main-col"}}},
+    {"id": "main-col", "component": {"Column": {"children": {"explicitList": ["dest", "date", "tabs"]}}}},
+    {"id": "dest", "component": {"Label": {"text": {"literalString": "Kyoto"}, "variant": "title"}}},
+    {"id": "date", "component": {"Label": {"text": {"literalString": "Apr 12 - Apr 18"}, "variant": "caption"}}},
+    {"id": "tabs", "component": {"Tabs": {"tabItems": [
+      {"title": {"literalString": "Itinerary"}, "child": "itinerary-col"},
+      {"title": {"literalString": "Checklist"}, "child": "checklist-col"}
+    ]}}},
+    {"id": "itinerary-col", "component": {"Column": {"children": {"explicitList": ["day1", "day2", "day3"]}}}},
+    {"id": "day1", "component": {"Label": {"text": {"literalString": "Day 1: Fushimi Inari + Gion"}, "variant": "body"}}},
+    {"id": "day2", "component": {"Label": {"text": {"literalString": "Day 2: Arashiyama + Kinkaku-ji"}, "variant": "body"}}},
+    {"id": "day3", "component": {"Label": {"text": {"literalString": "Day 3: Nishiki Market + Tea House"}, "variant": "body"}}},
+    {"id": "checklist-col", "component": {"Column": {"children": {"explicitList": ["c1", "c2", "c3"]}}}},
+    {"id": "c1", "component": {"Label": {"text": {"literalString": "[x] Passport"}, "variant": "bodySans"}}},
+    {"id": "c2", "component": {"Label": {"text": {"literalString": "[x] JR Pass"}, "variant": "bodySans"}}},
+    {"id": "c3", "component": {"Label": {"text": {"literalString": "[ ] Power Adapter"}, "variant": "bodySans"}}}
+  ]}}
+]

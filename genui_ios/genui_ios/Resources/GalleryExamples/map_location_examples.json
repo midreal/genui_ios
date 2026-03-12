@@ -1,0 +1,80 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "map-location-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "map-location-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "map-view",
+                  "caption"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Hotel Location"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "map-view",
+          "component": {
+            "Map": {
+              "latitude": {
+                "literalNumber": 35.6764
+              },
+              "longitude": {
+                "literalNumber": 139.6500
+              },
+              "zoom": {
+                "literalNumber": 13
+              },
+              "tileUrlTemplate": {
+                "literalString": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+              }
+            }
+          }
+        },
+        {
+          "id": "caption",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Pan and zoom to inspect nearby spots."
+              },
+              "color": "secondary",
+              "variant": "caption"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

@@ -12,6 +12,7 @@ public final class BindableView: UIView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .clear
+        translatesAutoresizingMaskIntoConstraints = false
     }
 
     @available(*, unavailable)

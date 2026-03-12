@@ -1,0 +1,242 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "slack-water-recipe-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "slack-water-recipe-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "dish-image",
+                  "dish-title",
+                  "dish-meta",
+                  "section-divider",
+                  "steps-list",
+                  "actions-row",
+                  "cook-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "dish-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/slack-water-bowl/720/720"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "dish-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Slack water - Salt Lake City"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "dish-meta",
+          "component": {
+            "TagText": {
+              "segments": {
+                "literalArray": [
+                  {
+                    "text": "high protein",
+                    "style": "secondary"
+                  },
+                  {
+                    "text": "1600 cal",
+                    "style": "secondary"
+                  },
+                  {
+                    "text": "30 min",
+                    "style": "secondary"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "section-divider",
+          "component": {
+            "Divider": {}
+          }
+        },
+        {
+          "id": "steps-list",
+          "component": {
+            "OrderedDisplayList": {
+              "items": [
+                {
+                  "child": "step-1"
+                },
+                {
+                  "child": "step-2"
+                },
+                {
+                  "child": "step-3"
+                },
+                {
+                  "child": "step-4"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "step-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🛒 Prep: 200g fish fillet, 1 tomato, fresh basil"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "step-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🧂 Marinate fish with salt, pepper and olive oil (10m)"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "step-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🔥 Bake fish and diced tomatoes at 200°C (15m)"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "step-4",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🍽️ Top with basil and serve over brown rice"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "actions-row",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "history-button",
+                  "shopping-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "history-button",
+          "component": {
+            "Button": {
+              "child": "history-label",
+              "style": "secondary",
+              "action": {
+                "name": "open_recent_recipes"
+              }
+            }
+          }
+        },
+        {
+          "id": "history-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "↺"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "shopping-button",
+          "weight": 1,
+          "component": {
+            "Button": {
+              "child": "shopping-label",
+              "style": "secondary",
+              "action": {
+                "name": "open_shopping_list"
+              }
+            }
+          }
+        },
+        {
+          "id": "shopping-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Shopping list"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "cook-button",
+          "component": {
+            "Button": {
+              "child": "cook-label",
+              "style": "primary",
+              "action": {
+                "name": "start_cooking"
+              }
+            }
+          }
+        },
+        {
+          "id": "cook-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "cooking"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

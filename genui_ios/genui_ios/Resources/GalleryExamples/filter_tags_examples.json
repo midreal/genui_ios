@@ -1,0 +1,260 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "filter-tags-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "filter-tags-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "dish-title",
+                  "dish-meta",
+                  "top-divider",
+                  "dish-quote",
+                  "dish-filter-tags",
+                  "mid-divider",
+                  "intel-title",
+                  "steps-list",
+                  "actions-row"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "dish-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🍅 Tomato Herb Baked Fish"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "dish-meta",
+          "component": {
+            "TagText": {
+              "segments": {
+                "literalArray": [
+                  {
+                    "text": "Est",
+                    "style": "tertiary"
+                  },
+                  {
+                    "text": "350cal",
+                    "style": "tertiary"
+                  },
+                  {
+                    "text": "Quick & Easy",
+                    "style": "secondary"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "top-divider",
+          "component": {
+            "Divider": {}
+          }
+        },
+        {
+          "id": "dish-quote",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "💬 \"Famous for legendary service and fresh cuts 🥩. Their tomato broth is to die for 🍅. Plus, free manicures 💅 make it a blast!\""
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "dish-filter-tags",
+          "component": {
+            "FilterTags": {
+              "tags": {
+                "path": "/filters",
+                "literalArray": [
+                  "Caption",
+                  "<3km",
+                  "€50"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "mid-divider",
+          "component": {
+            "Divider": {}
+          }
+        },
+        {
+          "id": "intel-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Intel"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "steps-list",
+          "component": {
+            "OrderedDisplayList": {
+              "items": [
+                {
+                  "child": "step-1"
+                },
+                {
+                  "child": "step-2"
+                },
+                {
+                  "child": "step-3"
+                },
+                {
+                  "child": "step-4"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "step-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🛒 Prep: 200g fish fillet, 1 tomato, fresh basil"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "step-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🧂 Marinate fish with salt, pepper & olive oil (10m)"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "step-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🔥 Bake fish & diced tomatoes at 200°C (15m)"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "step-4",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "🍽️ Top with basil and serve over brown rice"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "actions-row",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "retry-button",
+                  "cook-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "retry-button",
+          "component": {
+            "Button": {
+              "child": "retry-label",
+              "style": "secondary",
+              "action": {
+                "name": "retry_recipe"
+              }
+            }
+          }
+        },
+        {
+          "id": "retry-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "↺ Retry"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "cook-button",
+          "weight": 1,
+          "component": {
+            "Button": {
+              "child": "cook-label",
+              "style": "primary",
+              "action": {
+                "name": "start_cook"
+              }
+            }
+          }
+        },
+        {
+          "id": "cook-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Cook"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "filter-tags-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

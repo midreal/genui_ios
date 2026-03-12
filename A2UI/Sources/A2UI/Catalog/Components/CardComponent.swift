@@ -9,13 +9,14 @@ enum CardComponent {
     static func register() -> CatalogItem {
         CatalogItem(name: "Card") { context in
             let card = UIView()
-            card.backgroundColor = .secondarySystemBackground
-            card.layer.cornerRadius = 12
-            card.layer.shadowColor = UIColor.black.cgColor
-            card.layer.shadowOffset = CGSize(width: 0, height: 2)
-            card.layer.shadowRadius = 4
-            card.layer.shadowOpacity = 0.1
-            card.clipsToBounds = false
+            card.backgroundColor = MacaronColors.cardBackground
+            card.layer.cornerRadius = 16
+            card.layer.borderWidth = 1
+            card.layer.borderColor = MacaronColors.cardBorder.cgColor
+            card.clipsToBounds = true
+
+            // Inject card scope so child Column gets 12px spacing
+            card.macaronScope.cardActive = true
 
             let contentView = UIView()
             contentView.clipsToBounds = true
@@ -29,7 +30,7 @@ enum CardComponent {
                 contentView.bottomAnchor.constraint(equalTo: card.bottomAnchor)
             ])
 
-            let padding: CGFloat = 16
+            let padding: CGFloat = 12
             if let childId = context.data["child"] as? String {
                 let childView = context.buildChild(childId, nil)
                 contentView.addSubview(childView)

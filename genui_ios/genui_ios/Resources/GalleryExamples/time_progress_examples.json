@@ -1,0 +1,237 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "time-progress-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "time-progress-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "row-5",
+                  "row-4",
+                  "row-3",
+                  "row-2",
+                  "row-1"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Time"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "row-5",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "label-5",
+                  "bar-5"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "label-5",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "5"
+              },
+              "color": "tertiary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "bar-5",
+          "weight": 1,
+          "component": {
+            "LinearProgress": {
+              "progress": {
+                "literalNumber": 0.48
+              }
+            }
+          }
+        },
+        {
+          "id": "row-4",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "label-4",
+                  "bar-4"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "label-4",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "4"
+              },
+              "color": "tertiary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "bar-4",
+          "weight": 1,
+          "component": {
+            "LinearProgress": {
+              "progress": {
+                "literalNumber": 0.39
+              }
+            }
+          }
+        },
+        {
+          "id": "row-3",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "label-3",
+                  "bar-3"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "label-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "3"
+              },
+              "color": "tertiary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "bar-3",
+          "weight": 1,
+          "component": {
+            "LinearProgress": {
+              "progress": {
+                "literalNumber": 0.26
+              }
+            }
+          }
+        },
+        {
+          "id": "row-2",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "label-2",
+                  "bar-2"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "label-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "2"
+              },
+              "color": "tertiary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "bar-2",
+          "weight": 1,
+          "component": {
+            "LinearProgress": {
+              "progress": {
+                "literalNumber": 0.17
+              }
+            }
+          }
+        },
+        {
+          "id": "row-1",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "label-1",
+                  "bar-1"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "label-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "1"
+              },
+              "color": "tertiary",
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "bar-1",
+          "weight": 1,
+          "component": {
+            "LinearProgress": {
+              "progress": {
+                "literalNumber": 0.10
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

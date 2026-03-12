@@ -1,0 +1,200 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "date-time-selection",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "date-time-selection",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "title-text",
+                  "subtitle-text",
+                  "datetime-label",
+                  "datetime-picker",
+                  "date-label",
+                  "date-picker",
+                  "time-label",
+                  "time-picker",
+                  "confirm-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Schedule a Team Check-in"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Try full date-time, date only, and time only selectors."
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "datetime-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Meeting Date & Time"
+              },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "datetime-picker",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/meetingDateTime"
+              },
+              "enableDate": true,
+              "enableTime": true,
+              "firstDate": "2026-01-01",
+              "lastDate": "2026-12-31"
+            }
+          }
+        },
+        {
+          "id": "date-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Date Only"
+              },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "date-picker",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/meetingDate"
+              },
+              "enableDate": true,
+              "enableTime": false,
+              "firstDate": "2026-01-01",
+              "lastDate": "2026-12-31"
+            }
+          }
+        },
+        {
+          "id": "time-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Time Only"
+              },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "time-picker",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/meetingTime"
+              },
+              "enableDate": false,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "confirm-button-text",
+              "primary": true,
+              "action": {
+                "name": "confirmSchedule",
+                "context": [
+                  {
+                    "key": "meetingDateTime",
+                    "value": {
+                      "path": "/meetingDateTime"
+                    }
+                  },
+                  {
+                    "key": "meetingDate",
+                    "value": {
+                      "path": "/meetingDate"
+                    }
+                  },
+                  {
+                    "key": "meetingTime",
+                    "value": {
+                      "path": "/meetingTime"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-button-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Confirm Schedule"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "date-time-selection",
+      "path": "/",
+      "contents": [
+        {
+          "key": "meetingDateTime",
+          "valueString": "2026-03-12T09:30:00"
+        },
+        {
+          "key": "meetingDate",
+          "valueString": "2026-03-12"
+        },
+        {
+          "key": "meetingTime",
+          "valueString": "09:30:00"
+        }
+      ]
+    }
+  }
+]

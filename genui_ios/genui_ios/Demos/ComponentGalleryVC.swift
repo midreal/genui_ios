@@ -246,7 +246,6 @@ class ComponentGalleryVC: UIViewController {
     private static let layout  = UIColor.systemGreen
     private static let input   = UIColor.systemOrange
     private static let action  = UIColor.systemPurple
-    private static let media   = UIColor.systemRed
 
     private static func buildAllSections() -> [Section] {
         [
@@ -254,7 +253,7 @@ class ComponentGalleryVC: UIViewController {
             columnSection(), rowSection(), cardSection(), dividerSection(), listSection(), tabsSection(),
             textFieldSection(), checkBoxSection(), sliderSection(), choicePickerSection(), dateTimeInputSection(),
             buttonSection(), modalSection(),
-            audioPlayerSection(), videoSection(),
+            photoInputSection(),
         ]
     }
 
@@ -471,18 +470,14 @@ class ComponentGalleryVC: UIViewController {
 
     // MARK: Media
 
-    private static func audioPlayerSection() -> Section {
-        Section(name: "AudioPlayer", category: "Media", categoryColor: media, surfaceId: "g-audio", components: [
-            Component(id: "root", type: "AudioPlayer", properties: [
-                "description": "Sample Audio Track"
+    private static func photoInputSection() -> Section {
+        Section(name: "PhotoInput", category: "Media", categoryColor: UIColor.systemTeal, surfaceId: "g-photo", components: [
+            Component(id: "root", type: "PhotoInput", properties: [
+                "value": ["path": "/photoUrl"] as JsonMap,
+                "hasValue": ["path": "/hasPhoto"] as JsonMap,
+                "placeholder": "Snap a pic"
             ]),
-        ])
-    }
-
-    private static func videoSection() -> Section {
-        Section(name: "Video", category: "Media", categoryColor: media, surfaceId: "g-video", components: [
-            Component(id: "root", type: "Video", properties: [:]),
-        ])
+        ], dataModel: ["photoUrl": "", "hasPhoto": false])
     }
 }
 

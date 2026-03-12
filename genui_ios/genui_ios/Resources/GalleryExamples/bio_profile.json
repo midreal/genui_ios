@@ -1,0 +1,178 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "bio-profile-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "bio-profile-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "header-row",
+                  "about-section"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "header-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "avatar-image",
+                  "info-column"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "avatar-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/profile/avatarUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "info-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "name-text",
+                  "title-text",
+                  "website-text"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "name-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/profile/name"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/profile/title"
+              },
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "website-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/profile/website"
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "about-section",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "about-title",
+                  "about-description"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "about-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "About"
+              },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "about-description",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/profile/bio"
+              },
+              "variant": "body"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "bio-profile-surface",
+      "path": "/",
+      "contents": [
+        {
+          "key": "profile",
+          "valueMap": [
+            {
+              "key": "avatarUrl",
+              "valueString": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop"
+            },
+            {
+              "key": "name",
+              "valueString": "Sara Lawrence"
+            },
+            {
+              "key": "title",
+              "valueString": "Design in San Francisco"
+            },
+            {
+              "key": "website",
+              "valueString": "website.com"
+            },
+            {
+              "key": "bio",
+              "valueString": "I'm a passionate UX designer striving to create intuitive and engaging experiences. I'm a big believer that things can always be simpler than we think."
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

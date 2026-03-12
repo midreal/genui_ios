@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		14120C1E67933EA3C66CC121 /* Pods_genui_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4BC20F64BA838C597450905 /* Pods_genui_ios.framework */; };
 		FE3453E2CB86174DD2E5C6BC /* Pods_A2UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BA63F3A87621E5AA7AE4D /* Pods_A2UITests.framework */; };
+		GAL001EX2F4DCFFF0001C102 /* GalleryExamples in Resources */ = {isa = PBXBuildFile; fileRef = GAL002EX2F4DCFFF0001C102 /* GalleryExamples */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		437BA63F3A87621E5AA7AE4D /* Pods_A2UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_A2UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		GAL002EX2F4DCFFF0001C102 /* GalleryExamples */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "genui_ios/Resources/GalleryExamples"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		7B1ED6292F4DCFFE0001C102 /* genui_ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = genui_ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B4CEA392F515316004447C1 /* A2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = A2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EDA1F8BA39A988C72D363CD /* Pods-genui_ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-genui_ios.debug.xcconfig"; path = "Target Support Files/Pods-genui_ios/Pods-genui_ios.debug.xcconfig"; sourceTree = "<group>"; };
@@ -53,8 +56,6 @@
 		};
 		7B4CEA3A2F515316004447C1 /* A2UITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = A2UITests;
 			sourceTree = "<group>";
 		};
@@ -105,6 +106,7 @@
 			children = (
 				7B1ED62B2F4DCFFE0001C102 /* genui_ios */,
 				7B4CEA3A2F515316004447C1 /* A2UITests */,
+				GAL002EX2F4DCFFF0001C102 /* GalleryExamples */,
 				7B1ED62A2F4DCFFE0001C102 /* Products */,
 				7729D2EFB8E9CB1E2210DBF4 /* Pods */,
 				405AB5C7D1537FE345154586 /* Frameworks */,
@@ -210,6 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				GAL001EX2F4DCFFF0001C102 /* GalleryExamples in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,8 +13,18 @@ enum ButtonComponent {
     static func register() -> CatalogItem {
         CatalogItem(name: "Button") { context in
             let wrapper = BindableView()
-            let variant = context.data["variant"] as? String ?? ""
+            let variant = context.data["variant"] as? String
+                ?? context.data["style"] as? String ?? ""
             let config = makeConfiguration(variant: variant)
+
+            // Inject macaron button scope so Label descendants can adapt
+            let scopeStyle: MacaronButtonStyle = switch variant {
+            case "primary": .primary
+            case "secondary": .secondary
+            case "plain": .plain
+            default: .primary
+            }
+            wrapper.macaronScope.buttonStyle = scopeStyle
             let button = UIButton(configuration: config)
             button.translatesAutoresizingMaskIntoConstraints = false
 
@@ -87,6 +97,19 @@ enum ButtonComponent {
             config.baseBackgroundColor = .systemBlue
             config.baseForegroundColor = .white
             config.cornerStyle = .medium
+            config.contentInsets = insets
+            return config
+        case "secondary":
+            var config = UIButton.Configuration.plain()
+            config.baseForegroundColor = .label
+            config.background.strokeColor = MacaronColors.cardBorder
+            config.background.strokeWidth = 0.5
+            config.cornerStyle = .capsule
+            config.contentInsets = insets
+            return config
+        case "plain":
+            var config = UIButton.Configuration.plain()
+            config.baseForegroundColor = .label
             config.contentInsets = insets
             return config
         case "borderless":

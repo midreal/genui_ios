@@ -1,0 +1,113 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "tick-slider-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "tick-slider-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "title-label",
+                  "section-divider",
+                  "level-slider",
+                  "confirm-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "title-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Set roasting level"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "section-divider",
+          "component": {
+            "Divider": {}
+          }
+        },
+        {
+          "id": "level-slider",
+          "component": {
+            "TickSlider": {
+              "value": {
+                "path": "/progress",
+                "literalNumber": 60
+              },
+              "max": {
+                "literalNumber": 100
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "confirm-label",
+              "style": "primary",
+              "action": {
+                "name": "confirmRoastingLevel",
+                "context": [
+                  {
+                    "key": "progress",
+                    "value": {
+                      "path": "/progress"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Use this level"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "tick-slider-surface",
+      "path": "/",
+      "contents": [
+        {
+          "key": "progress",
+          "valueNumber": 60
+        }
+      ]
+    }
+  }
+]

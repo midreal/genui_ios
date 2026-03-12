@@ -1,0 +1,13 @@
+[
+  {"beginRendering": {"surfaceId": "project-status-board", "root": "root-card"}},
+  {"surfaceUpdate": {"surfaceId": "project-status-board", "components": [
+    {"id": "root-card", "component": {"Card": {"child": "main-col"}}},
+    {"id": "main-col", "component": {"Column": {"children": {"explicitList": ["title", "badge", "divider", "task1", "task2", "task3"]}}}},
+    {"id": "title", "component": {"Label": {"text": {"literalString": "Project Phoenix"}, "variant": "title"}}},
+    {"id": "badge", "component": {"Label": {"text": {"literalString": "78% complete"}, "variant": "caption"}}},
+    {"id": "divider", "component": {"Divider": {}}},
+    {"id": "task1", "component": {"Label": {"text": {"literalString": "Done - Design review (Alice)"}, "variant": "body"}}},
+    {"id": "task2", "component": {"Label": {"text": {"literalString": "Todo - API integration (Ben)"}, "variant": "body"}}},
+    {"id": "task3", "component": {"Label": {"text": {"literalString": "Todo - QA regression (Chen)"}, "variant": "body"}}}
+  ]}}
+]

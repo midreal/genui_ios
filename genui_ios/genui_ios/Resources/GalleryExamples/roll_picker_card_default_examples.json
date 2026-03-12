@@ -1,0 +1,62 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "roll-picker-card-default-surface",
+      "root": "root"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "roll-picker-card-default-surface",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "RollPickerCard": {
+              "columns": [
+                {
+                  "title": "Cuisine",
+                  "items": ["Fast food", "BBQ", "Spicy"]
+                },
+                {
+                  "title": "Budget",
+                  "items": ["$50", "$100", "$500"]
+                },
+                {
+                  "title": "Distance",
+                  "items": ["<50m", "<100m", "<500m"]
+                }
+              ],
+              "selection": {
+                "path": "/selection",
+                "literalArray": ["Cuisine", "Budget", "Distance"]
+              },
+              "hasCustomSelection": {
+                "path": "/hasCustomSelection",
+                "literalBoolean": false
+              },
+              "action": {
+                "name": "submit_roll_picker",
+                "context": [
+                  {
+                    "key": "flow",
+                    "value": {
+                      "literalString": "default_demo"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "roll-picker-card-default-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

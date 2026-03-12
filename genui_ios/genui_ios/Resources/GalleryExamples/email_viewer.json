@@ -1,0 +1,337 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "email-viewer-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "email-viewer-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "header-section",
+                  "divider-1",
+                  "subject-text",
+                  "meta-row",
+                  "divider-2",
+                  "body-text",
+                  "divider-3",
+                  "action-row"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "header-section",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "sender-avatar",
+                  "sender-info-column"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "sender-avatar",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/sender/avatar"
+              }
+            }
+          }
+        },
+        {
+          "id": "sender-info-column",
+          "weight": 1,
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "sender-name",
+                  "sender-email"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "sender-name",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/sender/name"
+              },
+              "variant": "bodySemibold"
+            }
+          }
+        },
+        {
+          "id": "sender-email",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/sender/email"
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "divider-1",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "subject-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/subject"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "meta-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "date-text",
+                  "time-text"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "date-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/date"
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "time-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/time"
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "divider-2",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "body-text",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/body"
+              },
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "divider-3",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "action-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "reply-button",
+                  "forward-button",
+                  "delete-button"
+                ]
+              },
+              "distribution": "spaceEvenly"
+            }
+          }
+        },
+        {
+          "id": "reply-button",
+          "component": {
+            "Button": {
+              "child": "reply-text",
+              "primary": true,
+              "action": {
+                "name": "reply",
+                "context": [
+                  {
+                    "key": "emailId",
+                    "value": {
+                      "path": "/id"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "reply-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "回复"
+              },
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "forward-button",
+          "component": {
+            "Button": {
+              "child": "forward-text",
+              "primary": false,
+              "action": {
+                "name": "forward",
+                "context": [
+                  {
+                    "key": "emailId",
+                    "value": {
+                      "path": "/id"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "forward-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "转发"
+              },
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "delete-button",
+          "component": {
+            "Button": {
+              "child": "delete-text",
+              "primary": false,
+              "action": {
+                "name": "delete",
+                "context": [
+                  {
+                    "key": "emailId",
+                    "value": {
+                      "path": "/id"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "delete-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "删除"
+              },
+              "variant": "body"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "email-viewer-surface",
+      "path": "/",
+      "contents": [
+        {
+          "key": "id",
+          "valueString": "email-001"
+        },
+        {
+          "key": "sender",
+          "valueMap": [
+            {
+              "key": "name",
+              "valueString": "张伟"
+            },
+            {
+              "key": "email",
+              "valueString": "zhangwei@example.com"
+            },
+            {
+              "key": "avatar",
+              "valueString": "https://i.pravatar.cc/150?img=33"
+            }
+          ]
+        },
+        {
+          "key": "subject",
+          "valueString": "关于下周项目会议的安排"
+        },
+        {
+          "key": "date",
+          "valueString": "2024年1月15日"
+        },
+        {
+          "key": "time",
+          "valueString": "上午 10:30"
+        },
+        {
+          "key": "body",
+          "valueString": "您好，\n\n我想和您确认一下下周三的项目进度会议。会议将在会议室A举行，预计持续2小时。\n\n会议议程：\n1. 项目进度回顾\n2. 当前问题讨论\n3. 下一阶段计划\n\n请您提前准备相关材料，如有时间冲突请尽快告知。\n\n谢谢！\n张伟"
+        }
+      ]
+    }
+  }
+]

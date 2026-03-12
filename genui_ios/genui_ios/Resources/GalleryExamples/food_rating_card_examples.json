@@ -1,0 +1,117 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "food-rating-card-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "food-rating-card-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "food-cover",
+                  "food-title",
+                  "food-subtitle",
+                  "food-tags",
+                  "food-rating"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "food-cover",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/sakura-chicken-don/640/420"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "food-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Sakura Chicken Don"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "food-subtitle",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Crispy chicken, soft egg, and sweet soy glaze."
+              },
+              "color": "secondary",
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "food-tags",
+          "component": {
+            "TagText": {
+              "segments": {
+                "literalArray": [
+                  {
+                    "text": "Japanese",
+                    "style": "secondary"
+                  },
+                  {
+                    "text": "Chef's Pick",
+                    "style": "highlight"
+                  },
+                  {
+                    "text": "28 min",
+                    "style": "tertiary"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "food-rating",
+          "component": {
+            "Rating": {
+              "rating": {
+                "literalNumber": 5
+              },
+              "text": {
+                "literalString": "4.8 (326 reviews)"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "food-rating-card-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

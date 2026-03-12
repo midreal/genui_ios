@@ -1,0 +1,197 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "selection-wrap-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "selection-wrap-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "title-text",
+                  "subtitle-text",
+                  "distance-wrap",
+                  "confirm-button"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Distance filter"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Pick up to 2 preferred commute ranges."
+              },
+              "color": "secondary",
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "distance-wrap",
+          "component": {
+            "SelectionWrap": {
+              "selection": {
+                "path": "/selectedDistance",
+                "literalArray": []
+              },
+              "maxSelection": 2,
+              "requiredSelection": 1,
+              "hasSelection": {
+                "path": "/canApply",
+                "literalBoolean": false
+              },
+              "items": [
+                {
+                  "value": "lt_3km",
+                  "child": "distance-lt-3"
+                },
+                {
+                  "value": "km_3_5",
+                  "child": "distance-3-5"
+                },
+                {
+                  "value": "km_5_10",
+                  "child": "distance-5-10"
+                },
+                {
+                  "value": "gt_10km",
+                  "child": "distance-gt-10"
+                },
+                {
+                  "value": "remote",
+                  "child": "distance-remote"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "distance-lt-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "<3km"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "distance-3-5",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "3-5km"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "distance-5-10",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "5-10km"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "distance-gt-10",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": ">10km"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "distance-remote",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Remote"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "confirm-label",
+              "style": "primary",
+              "enabled": {
+                "path": "/canApply"
+              },
+              "action": {
+                "name": "applyDistanceFilter",
+                "context": [
+                  {
+                    "key": "distance",
+                    "value": {
+                      "path": "/selectedDistance"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Apply"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "selection-wrap-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

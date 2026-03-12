@@ -4,6 +4,10 @@ import UIKit
 class ViewController: UITableViewController {
 
     private let demos: [(title: String, subtitle: String, vcType: UIViewController.Type)] = [
+        ("Gallery Examples", "a2ui_demo JSON 示例渲染", GalleryExamplesDemoVC.self),
+        ("复合组件 & 容器组件 Demo", "Molecules & Organisms 展示", MoleculesAndOrganismsDemoVC.self),
+        ("A2UI Writing Demo", "Watch AI write UI step by step", A2UIWritingDemoVC.self),
+        ("v0.8 vs v0.9 speedCompare", "Speedcompare with wait time", V08V09CompareDemoVC.self),
         ("Component Gallery", "All 18 components with JSON viewer", ComponentGalleryVC.self),
         ("JSON Playground", "Input JSON and render live", JSONPlaygroundVC.self),
         ("Chat Demo", "AI chat with mock backend", ChatDemoVC.self),

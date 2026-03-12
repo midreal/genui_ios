@@ -1,0 +1,89 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "full-screen-modal-demo",
+      "root": "root_column"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "full-screen-modal-demo",
+      "components": [
+        {
+          "id": "root_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "hint_label",
+                  "modal_entry"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "hint_label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Tap to open a full-screen modal."
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "modal_entry",
+          "component": {
+            "FullScreenModal": {
+              "entryPointChild": "open_button",
+              "contentChild": "modal_markdown"
+            }
+          }
+        },
+        {
+          "id": "open_button",
+          "component": {
+            "Button": {
+              "child": "open_button_label",
+              "style": "primary",
+              "action": {
+                "name": "showFullModal",
+                "context": [
+                  {
+                    "key": "modalId",
+                    "value": {
+                      "literalString": "modal_entry"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "open_button_label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Open Full Screen Modal"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "modal_markdown",
+          "component": {
+            "MarkdownView": {
+              "text": {
+                "literalString": "# Weekend Escape Plan\n\n## Itinerary\n\n- Fri 18:00 - Check in at Harbor Hotel\n- Sat 09:30 - Museum and riverside brunch\n- Sun 11:00 - Local market before checkout\n\n> Use the close button in the top-left corner to exit.\n\nNeed details? [Open travel checklist](https://example.com/travel-checklist)"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

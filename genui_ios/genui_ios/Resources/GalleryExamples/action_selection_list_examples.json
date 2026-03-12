@@ -1,0 +1,145 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "action-selection-list-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "action-selection-list-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "intro-label",
+                  "eta-selector"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "intro-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Here are the highly rated restaurants in Beijing translated into English, with all the details you need:"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "eta-selector",
+          "component": {
+            "ActionSelectionList": {
+              "selection": {
+                "path": "/selectedEta",
+                "literalArray": []
+              },
+              "action": {
+                "name": "selectRestaurantEta",
+                "context": [
+                  {
+                    "key": "city",
+                    "value": {
+                      "literalString": "Beijing"
+                    }
+                  },
+                  {
+                    "key": "selection",
+                    "value": {
+                      "path": "/selectedEta"
+                    }
+                  }
+                ]
+              },
+              "items": [
+                {
+                  "value": "lt_15",
+                  "child": "eta-15-label"
+                },
+                {
+                  "value": "lt_30",
+                  "child": "eta-30-label"
+                },
+                {
+                  "value": "lt_45",
+                  "child": "eta-45-label"
+                },
+                {
+                  "value": "farther_ok",
+                  "child": "eta-farther-label"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "eta-15-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "< 15 mins"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "eta-30-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "< 30 mins"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "eta-45-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "< 45 mins"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "eta-farther-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Farther is okay if it's worth it"
+              },
+              "variant": "bodySans"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "action-selection-list-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

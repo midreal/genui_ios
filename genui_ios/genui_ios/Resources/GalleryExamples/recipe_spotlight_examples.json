@@ -1,0 +1,16 @@
+[
+  {"beginRendering": {"surfaceId": "recipe-spotlight", "root": "root-card"}},
+  {"surfaceUpdate": {"surfaceId": "recipe-spotlight", "components": [
+    {"id": "root-card", "component": {"Card": {"child": "main-col"}}},
+    {"id": "main-col", "component": {"Column": {"children": {"explicitList": ["hero-row", "title", "meta-row", "desc", "cta"]}}}},
+    {"id": "hero-row", "component": {"Row": {"children": {"explicitList": ["hero-label"]}, "alignment": "center"}}},
+    {"id": "hero-label", "component": {"Label": {"text": {"literalString": "Chef's Pick"}, "variant": "caption"}}},
+    {"id": "title", "component": {"Label": {"text": {"literalString": "Creamy Mushroom Pasta"}, "variant": "title"}}},
+    {"id": "meta-row", "component": {"Row": {"children": {"explicitList": ["time", "difficulty"]}, "distribution": "spaceBetween"}}},
+    {"id": "time", "component": {"Label": {"text": {"literalString": "25 min"}, "variant": "caption"}}},
+    {"id": "difficulty", "component": {"Label": {"text": {"literalString": "Easy"}, "variant": "caption"}}},
+    {"id": "desc", "component": {"Label": {"text": {"literalString": "A quick weekday recipe with garlic, cream, and parmesan."}, "variant": "body"}}},
+    {"id": "cta", "component": {"Button": {"child": "cta-text", "primary": true, "action": {"name": "open_recipe"}}}},
+    {"id": "cta-text", "component": {"Label": {"text": {"literalString": "View Steps"}}}}
+  ]}}
+]

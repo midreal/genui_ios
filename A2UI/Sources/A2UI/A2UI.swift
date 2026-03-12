@@ -1,4 +1,4 @@
-// A2UI — Agent-to-UI Protocol v0.9 iOS UIKit Implementation
+// A2UI — Agent-to-UI Protocol v0.8 iOS UIKit Implementation
 //
 // Public API surface. Import `A2UI` to access all framework types.
 
@@ -9,13 +9,16 @@
 // MARK: - Protocol Constants
 
 /// The current A2UI protocol version.
-public let a2uiProtocolVersion = "v0.9"
+public let a2uiProtocolVersion = "v0.8"
 
 /// The JSON key used for surface IDs across all message types.
 public let surfaceIdKey = "surfaceId"
 
 /// The default catalog identifier used when none is specified.
 public let basicCatalogId = "com.google.genui.basic"
+
+/// The standard catalog identifier matching Dart's `standardCatalogId`.
+public let standardCatalogId = "a2ui.org:standard_catalog_0_8_0"
 
 /// Typealias for JSON dictionary used throughout the framework.
 public typealias JsonMap = [String: Any]

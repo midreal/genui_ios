@@ -34,7 +34,7 @@ enum DateTimeInputComponent {
             // Label (static or dynamic)
             let topLabel = UILabel()
             topLabel.font = .systemFont(ofSize: 13, weight: .medium)
-            topLabel.textColor = .secondaryLabel
+            topLabel.textColor = MacaronColors.secondary
             topLabel.isHidden = true
             stack.addArrangedSubview(topLabel)
 
@@ -53,6 +53,9 @@ enum DateTimeInputComponent {
 
             let picker = UIDatePicker()
             picker.preferredDatePickerStyle = .compact
+            picker.backgroundColor = .white
+            picker.layer.cornerRadius = 8
+            picker.clipsToBounds = true
             switch variant {
             case "time": picker.datePickerMode = .time
             case "datetime": picker.datePickerMode = .dateAndTime

@@ -1,0 +1,391 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "multi-selection-wrap-all-required-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "multi-selection-wrap-all-required-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "title-text",
+                  "subtitle-text",
+                  "tone-title",
+                  "tone-wrap",
+                  "audience-title",
+                  "audience-wrap",
+                  "channel-title",
+                  "channel-wrap",
+                  "submit-gate",
+                  "confirm-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Build your communication package"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Button unlocks only when all selector groups satisfy their own requiredSelection."
+              },
+              "color": "secondary",
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "tone-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Tone (pick 1)"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "tone-wrap",
+          "component": {
+            "SelectionWrap": {
+              "selection": {
+                "path": "/selectedTone",
+                "literalArray": []
+              },
+              "maxSelection": 1,
+              "requiredSelection": 1,
+              "hasSelection": {
+                "path": "/readyTone",
+                "literalBoolean": false
+              },
+              "items": [
+                {
+                  "value": "tone_calm",
+                  "child": "tone-calm"
+                },
+                {
+                  "value": "tone_bold",
+                  "child": "tone-bold"
+                },
+                {
+                  "value": "tone_playful",
+                  "child": "tone-playful"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "tone-calm",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Calm"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "tone-bold",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Bold"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "tone-playful",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Playful"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "audience-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Audience (pick at least 2)"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "audience-wrap",
+          "component": {
+            "SelectionWrap": {
+              "selection": {
+                "path": "/selectedAudience",
+                "literalArray": []
+              },
+              "maxSelection": 3,
+              "requiredSelection": 2,
+              "hasSelection": {
+                "path": "/readyAudience",
+                "literalBoolean": false
+              },
+              "items": [
+                {
+                  "value": "audience_pm",
+                  "child": "audience-pm"
+                },
+                {
+                  "value": "audience_dev",
+                  "child": "audience-dev"
+                },
+                {
+                  "value": "audience_exec",
+                  "child": "audience-exec"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "audience-pm",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Product"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "audience-dev",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Engineering"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "audience-exec",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Executive"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "channel-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Channel (pick at least 1)"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "channel-wrap",
+          "component": {
+            "SelectionWrap": {
+              "selection": {
+                "path": "/selectedChannel",
+                "literalArray": []
+              },
+              "maxSelection": 2,
+              "requiredSelection": 1,
+              "hasSelection": {
+                "path": "/readyChannel",
+                "literalBoolean": false
+              },
+              "items": [
+                {
+                  "value": "channel_email",
+                  "child": "channel-email"
+                },
+                {
+                  "value": "channel_inapp",
+                  "child": "channel-inapp"
+                },
+                {
+                  "value": "channel_push",
+                  "child": "channel-push"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "channel-email",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Email"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "channel-inapp",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "In-app"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "channel-push",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Push"
+              },
+              "variant": "subheadline"
+            }
+          }
+        },
+        {
+          "id": "submit-gate",
+          "component": {
+            "BooleanAllOf": {
+              "inputs": [
+                {
+                  "path": "/readyTone"
+                },
+                {
+                  "path": "/readyAudience"
+                },
+                {
+                  "path": "/readyChannel"
+                }
+              ],
+              "output": {
+                "path": "/canSubmit",
+                "literalBoolean": false
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "confirm-label",
+              "style": "primary",
+              "enabled": {
+                "path": "/canSubmit"
+              },
+              "action": {
+                "name": "submitCommunicationPackage",
+                "context": [
+                  {
+                    "key": "tone",
+                    "value": {
+                      "path": "/selectedTone"
+                    }
+                  },
+                  {
+                    "key": "audience",
+                    "value": {
+                      "path": "/selectedAudience"
+                    }
+                  },
+                  {
+                    "key": "channel",
+                    "value": {
+                      "path": "/selectedChannel"
+                    }
+                  },
+                  {
+                    "key": "canSubmit",
+                    "value": {
+                      "path": "/canSubmit"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Submit Package"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "multi-selection-wrap-all-required-surface",
+      "path": "/",
+      "contents": [
+        {
+          "key": "canSubmit",
+          "valueBoolean": false
+        },
+        {
+          "key": "readyTone",
+          "valueBoolean": false
+        },
+        {
+          "key": "readyAudience",
+          "valueBoolean": false
+        },
+        {
+          "key": "readyChannel",
+          "valueBoolean": false
+        }
+      ]
+    }
+  }
+]

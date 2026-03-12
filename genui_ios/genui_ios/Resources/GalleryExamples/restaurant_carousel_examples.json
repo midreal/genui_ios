@@ -1,0 +1,471 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "restaurant-carousel-surface",
+      "root": "root-carousel"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "restaurant-carousel-surface",
+      "components": [
+        {
+          "id": "root-carousel",
+          "component": {
+            "Carousel": {
+              "children": {
+                "explicitList": [
+                  "restaurant-card-1",
+                  "restaurant-card-2",
+                  "restaurant-card-3"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-card-1",
+          "component": {
+            "Card": {
+              "child": "restaurant-col-1"
+            }
+          }
+        },
+        {
+          "id": "restaurant-col-1",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "restaurant-image-1",
+                  "restaurant-title-1",
+                  "restaurant-meta-1",
+                  "restaurant-rating-1",
+                  "restaurant-distance-1",
+                  "restaurant-actions-1"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image-1",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/taste-texas/640/640"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "restaurant-title-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Taste of Texas"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "restaurant-meta-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "$$$ , Italian, Bars, Pizza"
+              },
+              "variant": "subheadline",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "restaurant-rating-1",
+          "component": {
+            "Rating": {
+              "rating": {
+                "literalNumber": 4
+              },
+              "text": {
+                "literalString": "(2.2k)"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-distance-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "14 km (10 min driving)"
+              },
+              "variant": "subheadline",
+              "color": "tertiary"
+            }
+          }
+        },
+        {
+          "id": "restaurant-actions-1",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "restaurant-choose-1",
+                  "restaurant-detail-1"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-choose-1",
+          "weight": 1,
+          "component": {
+            "Button": {
+              "child": "restaurant-choose-label-1",
+              "style": "primary",
+              "action": {
+                "name": "choose_restaurant_1"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-choose-label-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Choose"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "restaurant-detail-1",
+          "component": {
+            "Button": {
+              "child": "restaurant-detail-label-1",
+              "style": "secondary",
+              "action": {
+                "name": "detail_restaurant_1"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-detail-label-1",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Detail"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "restaurant-card-2",
+          "component": {
+            "Card": {
+              "child": "restaurant-col-2"
+            }
+          }
+        },
+        {
+          "id": "restaurant-col-2",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "restaurant-image-2",
+                  "restaurant-title-2",
+                  "restaurant-meta-2",
+                  "restaurant-rating-2",
+                  "restaurant-distance-2",
+                  "restaurant-actions-2"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image-2",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/pasta-garden/640/640"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "restaurant-title-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Pasta Garden"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "restaurant-meta-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "$$ , Italian, Wine Bar"
+              },
+              "variant": "subheadline",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "restaurant-rating-2",
+          "component": {
+            "Rating": {
+              "rating": {
+                "literalNumber": 4
+              },
+              "text": {
+                "literalString": "(1.6k)"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-distance-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "9 km (8 min driving)"
+              },
+              "variant": "subheadline",
+              "color": "tertiary"
+            }
+          }
+        },
+        {
+          "id": "restaurant-actions-2",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "restaurant-choose-2",
+                  "restaurant-detail-2"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-choose-2",
+          "weight": 1,
+          "component": {
+            "Button": {
+              "child": "restaurant-choose-label-2",
+              "style": "primary",
+              "action": {
+                "name": "choose_restaurant_2"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-choose-label-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Choose"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "restaurant-detail-2",
+          "component": {
+            "Button": {
+              "child": "restaurant-detail-label-2",
+              "style": "secondary",
+              "action": {
+                "name": "detail_restaurant_2"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-detail-label-2",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Detail"
+              },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "restaurant-card-3",
+          "component": {
+            "Card": {
+              "child": "restaurant-col-3"
+            }
+          }
+        },
+        {
+          "id": "restaurant-col-3",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "restaurant-image-3",
+                  "restaurant-title-3",
+                  "restaurant-meta-3",
+                  "restaurant-rating-3",
+                  "restaurant-distance-3",
+                  "restaurant-actions-3"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image-3",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/urban-smoke/640/640"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "restaurant-title-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Urban Smoke"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "restaurant-meta-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "$$$ , BBQ, Grill"
+              },
+              "variant": "subheadline",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "restaurant-rating-3",
+          "component": {
+            "Rating": {
+              "rating": {
+                "literalNumber": 5
+              },
+              "text": {
+                "literalString": "(3.1k)"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-distance-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "18 km (17 min driving)"
+              },
+              "variant": "subheadline",
+              "color": "tertiary"
+            }
+          }
+        },
+        {
+          "id": "restaurant-actions-3",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "restaurant-choose-3",
+                  "restaurant-detail-3"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-choose-3",
+          "weight": 1,
+          "component": {
+            "Button": {
+              "child": "restaurant-choose-label-3",
+              "style": "primary",
+              "action": {
+                "name": "choose_restaurant_3"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-choose-label-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Choose"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "restaurant-detail-3",
+          "component": {
+            "Button": {
+              "child": "restaurant-detail-label-3",
+              "style": "secondary",
+              "action": {
+                "name": "detail_restaurant_3"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-detail-label-3",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Detail"
+              },
+              "variant": "bodySans"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "restaurant-carousel-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

@@ -1,0 +1,121 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "photo-input-submit",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "photo-input-submit",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "title",
+                  "subtitle",
+                  "photo-input",
+                  "submit-button"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Upload Receipt"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Take a photo or choose one from your gallery."
+              },
+              "variant": "caption"
+            }
+          }
+        },
+        {
+          "id": "photo-input",
+          "component": {
+            "PhotoInput": {
+              "value": {
+                "path": "/photoUrl"
+              },
+              "hasValue": {
+                "path": "/hasPhoto"
+              },
+              "isUploading": {
+                "path": "/isUploading"
+              },
+              "placeholder": {
+                "literalString": "Snap a pic"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "submit-label",
+              "style": "primary",
+              "enabled": {
+                "path": "/hasPhoto"
+              },
+              "action": {
+                "name": "submit_photo",
+                "context": [
+                  {
+                    "key": "photoUrl",
+                    "value": {
+                      "path": "/photoUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Continue"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "photo-input-submit",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

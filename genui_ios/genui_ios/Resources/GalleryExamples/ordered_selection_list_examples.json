@@ -1,0 +1,125 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "ordered-selection-list-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "ordered-selection-list-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "title",
+                  "subtitle",
+                  "selector"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "title",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Pick your priorities" },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Tap in order. The red badge shows rank (1..n)."
+              },
+              "color": "secondary",
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "selector",
+          "component": {
+            "OrderedSelectionList": {
+              "selection": {
+                "path": "/chosen",
+                "literalArray": []
+              },
+              "maxSelection": 3,
+              "requiredSelection": 2,
+              "hasSelection": {
+                "path": "/ready",
+                "literalBoolean": false
+              },
+              "items": [
+                { "value": "stability", "child": "opt-stability" },
+                { "value": "performance", "child": "opt-performance" },
+                { "value": "security", "child": "opt-security" },
+                { "value": "accessibility", "child": "opt-accessibility" }
+              ]
+            }
+          }
+        },
+        {
+          "id": "opt-stability",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Stability" },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "opt-performance",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Performance" },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "opt-security",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Security" },
+              "variant": "bodySans"
+            }
+          }
+        },
+        {
+          "id": "opt-accessibility",
+          "component": {
+            "Label": {
+              "text": { "literalString": "Accessibility" },
+              "variant": "bodySans"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "ordered-selection-list-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

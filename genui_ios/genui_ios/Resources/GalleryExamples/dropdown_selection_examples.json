@@ -1,0 +1,211 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "dropdown-selection-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "dropdown-selection-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "eat-batter-label",
+                  "section-divider",
+                  "time-label",
+                  "time-row",
+                  "location-label",
+                  "location-dropdown",
+                  "confirm-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "eat-batter-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Eat batter"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "section-divider",
+          "component": {
+            "Divider": {}
+          }
+        },
+        {
+          "id": "time-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Time"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "time-row",
+          "component": {
+            "Row": {
+              "alignment": "center",
+              "children": {
+                "explicitList": [
+                  "date-input",
+                  "time-input"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "date-input",
+          "weight": 1,
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/eatDate"
+              },
+              "enableDate": true,
+              "enableTime": false
+            }
+          }
+        },
+        {
+          "id": "time-input",
+          "weight": 1,
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/eatTime"
+              },
+              "enableDate": false,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "location-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Location"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        },
+        {
+          "id": "location-dropdown",
+          "component": {
+            "DropdownSelection": {
+              "selection": {
+                "path": "/eatLocation",
+                "literalArray": []
+              },
+              "placeholder": {
+                "literalString": "Select location"
+              },
+              "hasSelection": {
+                "path": "/canSubmit",
+                "literalBoolean": false
+              },
+              "items": [
+                "Home",
+                "Office",
+                "Restaurant",
+                "Outdoor"
+              ]
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "confirm-label",
+              "style": "primary",
+              "enabled": {
+                "path": "/canSubmit"
+              },
+              "action": {
+                "name": "confirmEatBatterPlan",
+                "context": [
+                  {
+                    "key": "date",
+                    "value": {
+                      "path": "/eatDate"
+                    }
+                  },
+                  {
+                    "key": "time",
+                    "value": {
+                      "path": "/eatTime"
+                    }
+                  },
+                  {
+                    "key": "location",
+                    "value": {
+                      "path": "/eatLocation"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "confirm-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Confirm"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "dropdown-selection-surface",
+      "path": "/",
+      "contents": [
+        {
+          "key": "eatDate",
+          "valueString": "2026-03-10"
+        },
+        {
+          "key": "eatTime",
+          "valueString": "12:00:00"
+        },
+        {
+          "key": "canSubmit",
+          "valueBool": false
+        }
+      ]
+    }
+  }
+]

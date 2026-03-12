@@ -90,12 +90,6 @@ public final class SurfaceController {
             rootComponentId: payload.rootComponentId
         )
 
-        if payload.sendDataModel {
-            store.attachSurface(surfaceId)
-        } else {
-            store.detachSurface(surfaceId)
-        }
-
         registry.updateSurface(id: surfaceId, definition: definition, isNew: existing == nil)
 
         for msg in pending {
@@ -195,8 +189,10 @@ public final class SurfaceController {
     }
 
     /// Finds the catalog matching the given definition's catalogId.
+    /// Falls back to the first registered catalog if no exact match is found.
     public func findCatalog(for definition: SurfaceDefinition) -> Catalog? {
         catalogs.first { $0.catalogId == definition.catalogId }
+            ?? catalogs.first
     }
 
     // MARK: - Dispose

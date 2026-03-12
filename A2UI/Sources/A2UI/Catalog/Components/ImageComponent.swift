@@ -23,10 +23,13 @@ enum ImageComponent {
             imageView.translatesAutoresizingMaskIntoConstraints = false
 
             let variant = context.data["variant"] as? String
-            let size = sizeForVariant(variant)
+            let sizeStr = context.data["size"] as? String
+            let size = sizeForVariant(sizeStr ?? variant)
 
             if variant == "avatar" {
                 imageView.layer.cornerRadius = size / 2
+            } else if sizeStr != nil {
+                imageView.layer.cornerRadius = radiusForSize(sizeStr)
             }
 
             // Loading indicator
@@ -87,10 +90,24 @@ enum ImageComponent {
     private static func sizeForVariant(_ variant: String?) -> CGFloat {
         switch variant {
         case "icon", "avatar": return 32
+        case "small": return 40
         case "smallFeature": return 50
+        case "medium": return 80
+        case "large": return 120
         case "mediumFeature": return 150
         case "largeFeature": return 400
         default: return 150
+        }
+    }
+
+    /// Macaron-specific radius for size presets
+    private static func radiusForSize(_ size: String?) -> CGFloat {
+        switch size {
+        case "small": return 8
+        case "medium": return 12
+        case "large": return 16
+        case "full": return 16
+        default: return 8
         }
     }
 

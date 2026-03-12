@@ -1,0 +1,19 @@
+[
+  {"beginRendering": {"surfaceId": "finance-snapshot", "root": "root-card"}},
+  {"surfaceUpdate": {"surfaceId": "finance-snapshot", "components": [
+    {"id": "root-card", "component": {"Card": {"child": "root-col"}}},
+    {"id": "root-col", "component": {"Column": {"children": {"explicitList": ["title", "income-row", "expense-row", "save-row", "divider", "trend"]}}}},
+    {"id": "title", "component": {"Label": {"text": {"literalString": "March Snapshot"}, "variant": "title"}}},
+    {"id": "income-row", "component": {"Row": {"children": {"explicitList": ["income-label", "income-value"]}, "distribution": "spaceBetween"}}},
+    {"id": "income-label", "component": {"Label": {"text": {"literalString": "Income"}, "variant": "caption"}}},
+    {"id": "income-value", "component": {"Label": {"text": {"literalString": "$8,450"}, "variant": "bodySemibold"}}},
+    {"id": "expense-row", "component": {"Row": {"children": {"explicitList": ["expense-label", "expense-value"]}, "distribution": "spaceBetween"}}},
+    {"id": "expense-label", "component": {"Label": {"text": {"literalString": "Expense"}, "variant": "caption"}}},
+    {"id": "expense-value", "component": {"Label": {"text": {"literalString": "$5,130"}, "variant": "bodySemibold"}}},
+    {"id": "save-row", "component": {"Row": {"children": {"explicitList": ["save-label", "save-value"]}, "distribution": "spaceBetween"}}},
+    {"id": "save-label", "component": {"Label": {"text": {"literalString": "Saving Rate"}, "variant": "caption"}}},
+    {"id": "save-value", "component": {"Label": {"text": {"literalString": "39%"}, "variant": "bodySemibold"}}},
+    {"id": "divider", "component": {"Divider": {}}},
+    {"id": "trend", "component": {"Label": {"text": {"literalString": "Trend: +6.2% vs last month"}, "variant": "body"}}}
+  ]}}
+]

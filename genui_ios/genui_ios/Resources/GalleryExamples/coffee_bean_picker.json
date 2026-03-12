@@ -1,0 +1,375 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "coffee-bean-picker-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "coffee-bean-picker-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "header-group",
+                  "bean-selector",
+                  "confirm-button"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "header-group",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "title-text",
+                  "subtitle-text"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Choose your coffee beans"
+              },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "subtitle-text",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Pick 2 to 3 flavor profiles for your next roast."
+              },
+              "color": "secondary",
+              "variant": "body"
+            }
+          }
+        },
+        {
+          "id": "bean-selector",
+          "component": {
+            "SelectionGrid": {
+              "selection": {
+                "path": "/selectedBeans",
+                "literalArray": []
+              },
+              "maxSelection": 3,
+              "requiredSelection": 2,
+              "hasSelection": {
+                "path": "/canConfirm",
+                "literalBoolean": false
+              },
+              "items": [
+                {
+                  "value": "bean_choco",
+                  "child": "bean-choco"
+                },
+                {
+                  "value": "bean_citrus",
+                  "child": "bean-citrus"
+                },
+                {
+                  "value": "bean_nutty",
+                  "child": "bean-nutty"
+                },
+                {
+                  "value": "bean_floral",
+                  "child": "bean-floral"
+                },
+                {
+                  "value": "bean_caramel",
+                  "child": "bean-caramel"
+                },
+                {
+                  "value": "bean_berry",
+                  "child": "bean-berry"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "bean-choco",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "bean-choco-image",
+                  "bean-choco-label"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "bean-choco-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/coffee-choco/96/96"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "bean-choco-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Chocolate"
+              },
+              "variant": "captionSemibold"
+            }
+          }
+        },
+        {
+          "id": "bean-citrus",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "bean-citrus-image",
+                  "bean-citrus-label"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "bean-citrus-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/coffee-citrus/96/96"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "bean-citrus-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Citrus"
+              },
+              "variant": "captionSemibold"
+            }
+          }
+        },
+        {
+          "id": "bean-nutty",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "bean-nutty-image",
+                  "bean-nutty-label"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "bean-nutty-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/coffee-nutty/96/96"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "bean-nutty-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Nutty"
+              },
+              "variant": "captionSemibold"
+            }
+          }
+        },
+        {
+          "id": "bean-floral",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "bean-floral-image",
+                  "bean-floral-label"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "bean-floral-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/coffee-floral/96/96"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "bean-floral-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Floral"
+              },
+              "variant": "captionSemibold"
+            }
+          }
+        },
+        {
+          "id": "bean-caramel",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "bean-caramel-image",
+                  "bean-caramel-label"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "bean-caramel-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/coffee-caramel/96/96"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "bean-caramel-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Caramel"
+              },
+              "variant": "captionSemibold"
+            }
+          }
+        },
+        {
+          "id": "bean-berry",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "bean-berry-image",
+                  "bean-berry-label"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "bean-berry-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://picsum.photos/seed/coffee-berry/96/96"
+              },
+              "size": "full"
+            }
+          }
+        },
+        {
+          "id": "bean-berry-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Berry"
+              },
+              "variant": "captionSemibold"
+            }
+          }
+        },
+        {
+          "id": "confirm-button",
+          "component": {
+            "Button": {
+              "child": "btn-label",
+              "style": "primary",
+              "enabled": {
+                "path": "/canConfirm"
+              },
+              "action": {
+                "name": "confirmBeans",
+                "context": [
+                  {
+                    "key": "beans",
+                    "value": {
+                      "path": "/selectedBeans"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "btn-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Continue"
+              },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "coffee-bean-picker-surface",
+      "path": "/",
+      "contents": []
+    }
+  }
+]
