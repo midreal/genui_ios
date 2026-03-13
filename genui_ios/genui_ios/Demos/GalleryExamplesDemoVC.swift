@@ -1,24 +1,19 @@
 import UIKit
 import A2UI
 
-/// 一屏展示所有 gallery 示例，每个示例直接渲染在列表中。
+/// 列表展示 gallery 示例，点击进入详情页单独渲染（多 SurfaceView 同屏有布局竞态，单独展示稳定）。
 class GalleryExamplesDemoVC: UIViewController {
 
     private var controller: SurfaceController!
+    private var examples: [(displayName: String, surfaceId: String)] = []
+    private var errorItems: [(displayName: String, error: String)] = []
 
-    private lazy var scrollView: UIScrollView = {
-        let sv = UIScrollView()
-        sv.alwaysBounceVertical = true
-        sv.backgroundColor = .systemGroupedBackground
-        return sv
-    }()
-
-    private lazy var stackView: UIStackView = {
-        let s = UIStackView()
-        s.axis = .vertical
-        s.spacing = 20
-        s.alignment = .fill
-        return s
+    private lazy var tableView: UITableView = {
+        let tv = UITableView(frame: .zero, style: .insetGrouped)
+        tv.delegate = self
+        tv.dataSource = self
+        tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        return tv
     }()
 
     override func viewDidLoad() {
@@ -29,47 +24,36 @@ class GalleryExamplesDemoVC: UIViewController {
         let catalog = BasicCatalog.create()
         controller = SurfaceController(catalogs: [catalog])
 
-        view.addSubview(scrollView)
-        scrollView.addSubview(stackView)
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
-            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
-            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -16),
-            stackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
-        loadAndRenderAll()
+        loadExamples()
     }
 
-    private func loadAndRenderAll() {
+    private func loadExamples() {
         let urls = loadExampleURLs()
         guard !urls.isEmpty else {
-            let label = UILabel()
-            label.text = "未找到 JSON 示例文件"
-            label.textColor = .secondaryLabel
-            stackView.addArrangedSubview(label)
+            errorItems.append(("未找到 JSON 示例文件", ""))
+            tableView.reloadData()
             return
         }
 
-        let examples = urls
+        let sorted = urls
             .map { ($0, $0.deletingPathExtension().lastPathComponent) }
             .sorted { $0.1.localizedCaseInsensitiveCompare($1.1) == .orderedAscending }
 
-        for (url, name) in examples {
+        for (url, name) in sorted {
             let displayName = formatDisplayName(name)
 
             guard let data = try? Data(contentsOf: url),
                   let parsed = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                stackView.addArrangedSubview(makeErrorCard(title: displayName, error: "JSON 解析失败"))
+                errorItems.append((displayName, "JSON 解析失败"))
                 continue
             }
 
@@ -77,7 +61,7 @@ class GalleryExamplesDemoVC: UIViewController {
             if let arr = parsed as? [JsonMap] { jsonArray = arr }
             else if let single = parsed as? JsonMap { jsonArray = [single] }
             else {
-                stackView.addArrangedSubview(makeErrorCard(title: displayName, error: "无效 JSON"))
+                errorItems.append((displayName, "无效 JSON"))
                 continue
             }
 
@@ -92,22 +76,22 @@ class GalleryExamplesDemoVC: UIViewController {
                 }
             }
             if let err = parseError {
-                stackView.addArrangedSubview(makeErrorCard(title: displayName, error: err))
+                errorItems.append((displayName, err))
                 continue
             }
 
             for msg in messages { controller.handleMessage(msg) }
 
             guard let surfaceId = messages.first?.surfaceId else {
-                stackView.addArrangedSubview(makeErrorCard(title: displayName, error: "无 surfaceId"))
+                errorItems.append((displayName, "无 surfaceId"))
                 continue
             }
 
-            stackView.addArrangedSubview(makeCard(title: displayName, surfaceId: surfaceId))
+            examples.append((displayName, surfaceId))
         }
-    }
 
-    // MARK: - File Discovery
+        tableView.reloadData()
+    }
 
     private func loadExampleURLs() -> [URL] {
         for subdir in ["GalleryExamples", "Resources/GalleryExamples"] {
@@ -154,72 +138,90 @@ class GalleryExamplesDemoVC: UIViewController {
             .capitalized
     }
 
-    // MARK: - Card UI
+    private func showDetail(surfaceId: String, title: String) {
+        let vc = GalleryExampleDetailVC(controller: controller, surfaceId: surfaceId)
+        vc.title = title
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
 
-    private func makeCard(title: String, surfaceId: String) -> UIView {
-        let card = UIView()
-        card.backgroundColor = .secondarySystemGroupedBackground
-        card.layer.cornerRadius = 12
-        card.clipsToBounds = true
+// MARK: - UITableViewDataSource & Delegate
 
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 15, weight: .semibold)
-        titleLabel.textColor = .label
+extension GalleryExamplesDemoVC: UITableViewDataSource, UITableViewDelegate {
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        (examples.isEmpty ? 0 : 1) + (errorItems.isEmpty ? 0 : 1)
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return examples.isEmpty ? errorItems.count : examples.count
+        }
+        return errorItems.count
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 && !examples.isEmpty { return "示例" }
+        if (!examples.isEmpty && section == 1) || (examples.isEmpty && section == 0) {
+            return "错误"
+        }
+        return nil
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        if !examples.isEmpty && indexPath.section == 0 {
+            let item = examples[indexPath.row]
+            cell.textLabel?.text = item.displayName
+            cell.textLabel?.textColor = .label
+            cell.accessoryType = .disclosureIndicator
+        } else {
+            let item = errorItems[indexPath.row]
+            cell.textLabel?.text = item.error.isEmpty ? item.displayName : "\(item.displayName): \(item.error)"
+            cell.textLabel?.textColor = item.error.isEmpty ? .label : .systemRed
+            cell.accessoryType = .none
+        }
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        guard !examples.isEmpty, indexPath.section == 0 else { return }
+        let item = examples[indexPath.row]
+        showDetail(surfaceId: item.surfaceId, title: item.displayName)
+    }
+}
+
+// MARK: - Detail VC (single SurfaceView)
+
+private final class GalleryExampleDetailVC: UIViewController {
+
+    private let controller: SurfaceController
+    private let surfaceId: String
+
+    init(controller: SurfaceController, surfaceId: String) {
+        self.controller = controller
+        self.surfaceId = surfaceId
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemGroupedBackground
 
         let ctx = controller.contextFor(surfaceId: surfaceId)
         let surfaceView = SurfaceView(surfaceContext: ctx)
-
-        let vStack = UIStackView(arrangedSubviews: [titleLabel, surfaceView])
-        vStack.axis = .vertical
-        vStack.spacing = 8
-        vStack.layoutMargins = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
-        vStack.isLayoutMarginsRelativeArrangement = true
-
-        card.addSubview(vStack)
-        vStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(surfaceView)
+        surfaceView.translatesAutoresizingMaskIntoConstraints = false
+        surfaceView.backgroundColor = .systemBackground
         NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: card.topAnchor),
-            vStack.leadingAnchor.constraint(equalTo: card.leadingAnchor),
-            vStack.trailingAnchor.constraint(equalTo: card.trailingAnchor),
-            vStack.bottomAnchor.constraint(equalTo: card.bottomAnchor),
+            surfaceView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            surfaceView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            surfaceView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            surfaceView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
-
-        return card
-    }
-
-    private func makeErrorCard(title: String, error: String) -> UIView {
-        let card = UIView()
-        card.backgroundColor = .secondarySystemGroupedBackground
-        card.layer.cornerRadius = 12
-        card.clipsToBounds = true
-
-        let vStack = UIStackView()
-        vStack.axis = .vertical
-        vStack.spacing = 4
-        vStack.layoutMargins = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
-        vStack.isLayoutMarginsRelativeArrangement = true
-        card.addSubview(vStack)
-        vStack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: card.topAnchor),
-            vStack.leadingAnchor.constraint(equalTo: card.leadingAnchor),
-            vStack.trailingAnchor.constraint(equalTo: card.trailingAnchor),
-            vStack.bottomAnchor.constraint(equalTo: card.bottomAnchor),
-        ])
-
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
-        vStack.addArrangedSubview(titleLabel)
-
-        let errorLabel = UILabel()
-        errorLabel.text = error
-        errorLabel.font = .systemFont(ofSize: 13)
-        errorLabel.textColor = .systemRed
-        errorLabel.numberOfLines = 0
-        vStack.addArrangedSubview(errorLabel)
-
-        return card
     }
 }
