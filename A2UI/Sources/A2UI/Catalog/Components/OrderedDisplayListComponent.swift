@@ -41,7 +41,6 @@ enum OrderedDisplayListComponent {
 
                 stack.addArrangedSubview(row)
             }
-
             return stack
         }
     }

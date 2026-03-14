@@ -44,6 +44,16 @@ enum ImageComponent {
 
             if variant == "header" {
                 wrapper.embed(imageView)
+            } else if sizeStr == "full" {
+                // macaron_widgets: size="full" fills parent width, 1:1 aspect ratio
+                wrapper.addSubview(imageView)
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    imageView.topAnchor.constraint(equalTo: wrapper.topAnchor),
+                    imageView.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor),
+                    imageView.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor),
+                    imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 1),
+                ])
             } else {
                 wrapper.addSubview(imageView)
                 NSLayoutConstraint.activate([
@@ -82,7 +92,6 @@ enum ImageComponent {
                     }
                 }
             wrapper.storeCancellable(cancellable)
-
             return wrapper
         }
     }

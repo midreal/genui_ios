@@ -11,22 +11,23 @@ enum ColumnComponent {
 
     static func register() -> CatalogItem {
         CatalogItem(name: "Column") { context in
+            // 同步设置 spacing，避免 async 在布局后改 spacing 触发 layout 循环
+            let align = context.data["align"] as? String
+            let defaultSpacing: CGFloat = (align == "stretch") ? 12 : 0
             let view = LayoutComponent.buildStackView(
                 context: context,
                 axis: .vertical,
-                defaultSpacing: 0
+                defaultSpacing: defaultSpacing
             )
-            // If inside a card scope, use 12px spacing
-            DispatchQueue.main.async { [weak view] in
-                guard let view = view else { return }
-                if view.macaronCardActive() {
-                    if let stack = view as? UIStackView {
-                        stack.spacing = 12
-                    } else if let stack = view.subviews.first as? UIStackView {
-                        stack.spacing = 12
+            // 非 stretch 时仍用 async 检查 card  scope（如 center/start 的 Column 在 Card 内）
+            if align != "stretch" {
+                DispatchQueue.main.async { [weak view] in
+                    guard let view = view else { return }
+                    if view.macaronCardActive() {
+                        if let stack = view as? UIStackView { stack.spacing = 12 }
+                        else if let stack = view.subviews.first as? UIStackView { stack.spacing = 12 }
+                        view.macaronScope.cardActive = false
                     }
-                    // Consume the scope
-                    view.macaronScope.cardActive = false
                 }
             }
             return view

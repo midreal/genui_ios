@@ -85,6 +85,16 @@ enum ButtonComponent {
                 wrapper.storeCancellable(cancellable)
             }
 
+            // macaron_widgets: enabled — data-bound boolean to enable/disable
+            if let enabledDef = context.data["enabled"] {
+                let cancellable = context.dataContext.resolve(enabledDef)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak button] value in
+                        button?.isEnabled = (value as? Bool) ?? true
+                    }
+                wrapper.storeCancellable(cancellable)
+            }
+
             return wrapper
         }
     }

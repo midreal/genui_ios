@@ -1,32 +1,30 @@
 import UIKit
 import Combine
 
-/// A pure display wrap-style tag group for Macaron filter labels.
+/// A pure display tag group for Macaron filter labels.
+/// 使用 UIStackView 实现，避免 UICollectionView 的布局循环和 watchdog 超时。
 ///
 /// Parameters:
 /// - `tags`: A path/literal reference to an array of tag strings.
 enum FilterTagsComponent {
 
-    private static let wrapSpacing: CGFloat = 8
-    private static let tagHorizontalPadding: CGFloat = 8
-    private static let tagRadius: CGFloat = 8
-    private static let tagBackgroundColor = UIColor(red: 0x16/255, green: 0x16/255, blue: 0x15/255, alpha: 0.05)
-    private static let tagFont = UIFont.systemFont(ofSize: 14, weight: .regular)
-    private static let tagTextColor = MacaronColors.label
-
     static func register() -> CatalogItem {
         CatalogItem(name: "FilterTags") { context in
             let wrapper = BindableView()
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.spacing = 8
+            stack.alignment = .center
+            stack.distribution = .fill
+            stack.translatesAutoresizingMaskIntoConstraints = false
 
-            let container = FilterTagsFlowView()
-            container.translatesAutoresizingMaskIntoConstraints = false
-            wrapper.embed(container)
+            wrapper.embed(stack)
 
             let tagsDef = context.data["tags"]
             let cancellable = context.dataContext.resolve(tagsDef)
                 .receive(on: DispatchQueue.main)
-                .sink { [weak container] value in
-                    guard let container = container else { return }
+                .sink { [weak stack] value in
+                    guard let stack = stack else { return }
                     let tags: [String]
                     if let arr = value as? [Any] {
                         tags = arr.compactMap { item -> String? in
@@ -36,88 +34,40 @@ enum FilterTagsComponent {
                     } else {
                         tags = []
                     }
-                    container.setTags(tags)
+                    // 延后到下一 run loop，避免在布局/约束更新中同步修改导致 watchdog 超时
+                    DispatchQueue.main.async { [weak stack] in
+                        guard let stack = stack else { return }
+                        stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+                        for tag in tags {
+                            let chip = makeTagChip(tag: tag)
+                            stack.addArrangedSubview(chip)
+                        }
+                    }
                 }
             wrapper.storeCancellable(cancellable)
-
             return wrapper
         }
     }
-}
 
-private final class FilterTagsFlowView: UIView {
-    private var tagViews: [UIView] = []
+    private static func makeTagChip(tag: String) -> UIView {
+        let label = UILabel()
+        label.text = tag
+        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        label.textColor = MacaronColors.label
 
-    func setTags(_ tags: [String]) {
-        tagViews.forEach { $0.removeFromSuperview() }
-        tagViews.removeAll()
+        let container = UIView()
+        container.backgroundColor = UIColor(red: 0x16/255, green: 0x16/255, blue: 0x15/255, alpha: 0.05)
+        container.layer.cornerRadius = 8
+        container.clipsToBounds = true
 
-        for tag in tags {
-            let label = UILabel()
-            label.text = tag
-            label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-            label.textColor = MacaronColors.label
-
-            let container = UIView()
-            container.backgroundColor = UIColor(red: 0x16/255, green: 0x16/255, blue: 0x15/255, alpha: 0.05)
-            container.layer.cornerRadius = 8
-            container.clipsToBounds = true
-
-            container.addSubview(label)
-            label.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                label.topAnchor.constraint(equalTo: container.topAnchor, constant: 2),
-                label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -2),
-                label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
-                label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
-            ])
-
-            addSubview(container)
-            tagViews.append(container)
-        }
-        setNeedsLayout()
-        invalidateIntrinsicContentSize()
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let spacing: CGFloat = 8
-        let maxWidth = bounds.width > 0 ? bounds.width : .greatestFiniteMagnitude
-        var x: CGFloat = 0
-        var y: CGFloat = 0
-        var rowHeight: CGFloat = 0
-
-        for view in tagViews {
-            let size = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-            if x + size.width > maxWidth && x > 0 {
-                x = 0
-                y += rowHeight + spacing
-                rowHeight = 0
-            }
-            view.frame = CGRect(x: x, y: y, width: size.width, height: size.height)
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-        }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        let spacing: CGFloat = 8
-        let maxWidth = bounds.width > 0 ? bounds.width : 300
-        var x: CGFloat = 0
-        var y: CGFloat = 0
-        var rowHeight: CGFloat = 0
-
-        for view in tagViews {
-            let size = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-            if x + size.width > maxWidth && x > 0 {
-                x = 0
-                y += rowHeight + spacing
-                rowHeight = 0
-            }
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-        }
-
-        return CGSize(width: UIView.noIntrinsicMetric, height: y + rowHeight)
+        container.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: container.topAnchor, constant: 2),
+            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -2),
+            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
+            label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
+        ])
+        return container
     }
 }

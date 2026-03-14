@@ -38,6 +38,10 @@ public final class SurfaceView: UIView {
             }
     }
 
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+
     // MARK: - Rebuild
 
     private func rebuildUI(definition: SurfaceDefinition?) {
@@ -82,7 +86,6 @@ public final class SurfaceView: UIView {
         guard let component = definition.components[widgetId] else {
             return makeFallbackView(message: "Component '\(widgetId)' not found")
         }
-
         let context = CatalogItemContext(
             id: widgetId,
             type: component.type,
@@ -182,6 +185,7 @@ public final class SurfaceView: UIView {
         label.textColor = .systemRed
         label.font = .systemFont(ofSize: 11)
         label.numberOfLines = 0
+        label.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 64  // fallback 不在 BindableView 内，用固定值
         stack.addArrangedSubview(label)
 
         return container

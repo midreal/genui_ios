@@ -1,0 +1,1022 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "stock-dashboard",
+      "root": "root-column"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "stock-dashboard",
+      "components": [
+        {
+          "id": "root-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "header-section",
+                  "market-indices",
+                  "hot-stocks-title",
+                  "hot-stocks-list",
+                  "portfolio-card"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "header-section",
+          "component": {
+            "Card": {
+              "child": "header-row"
+            }
+          }
+        },
+        {
+          "id": "header-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "header-icon",
+                  "header-title"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "header-icon",
+          "component": {
+            "Icon": {
+              "name": {
+                "literalString": "fire"
+              },
+              "style": "filled"
+            }
+          }
+        },
+        {
+          "id": "header-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Market Dashboard"
+              },
+              "variant": "title",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "market-indices",
+          "component": {
+            "Card": {
+              "child": "indices-column"
+            }
+          }
+        },
+        {
+          "id": "indices-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "indices-header",
+                  "indices-carousel"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "indices-header",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Market Indices"
+              },
+              "variant": "subheadlineSemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "indices-carousel",
+          "component": {
+            "Carousel": {
+              "children": {
+                "explicitList": [
+                  "index-sh",
+                  "index-sz",
+                  "index-hs300"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "index-sh",
+          "component": {
+            "Card": {
+              "child": "index-sh-col"
+            }
+          }
+        },
+        {
+          "id": "index-sh-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "index-sh-name",
+                  "index-sh-price",
+                  "index-sh-change-row"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "index-sh-name",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sh/name"
+              },
+              "variant": "bodySansSemibold",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "index-sh-price",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sh/price"
+              },
+              "variant": "title",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "index-sh-change-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "index-sh-change",
+                  "index-sh-percent"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "index-sh-change",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sh/change"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "index-sh-percent",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sh/percent"
+              },
+              "variant": "body",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "index-sz",
+          "component": {
+            "Card": {
+              "child": "index-sz-col"
+            }
+          }
+        },
+        {
+          "id": "index-sz-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "index-sz-name",
+                  "index-sz-price",
+                  "index-sz-change-row"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "index-sz-name",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sz/name"
+              },
+              "variant": "bodySansSemibold",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "index-sz-price",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sz/price"
+              },
+              "variant": "title",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "index-sz-change-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "index-sz-change",
+                  "index-sz-percent"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "index-sz-change",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sz/change"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "index-sz-percent",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/sz/percent"
+              },
+              "variant": "body",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "index-hs300",
+          "component": {
+            "Card": {
+              "child": "index-hs300-col"
+            }
+          }
+        },
+        {
+          "id": "index-hs300-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "index-hs300-name",
+                  "index-hs300-price",
+                  "index-hs300-change-row"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "index-hs300-name",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/hs300/name"
+              },
+              "variant": "bodySansSemibold",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "index-hs300-price",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/hs300/price"
+              },
+              "variant": "title",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "index-hs300-change-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "index-hs300-change",
+                  "index-hs300-percent"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "index-hs300-change",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/hs300/change"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "index-hs300-percent",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/indices/hs300/percent"
+              },
+              "variant": "body",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "hot-stocks-title",
+          "component": {
+            "Card": {
+              "child": "hot-stocks-title-label"
+            }
+          }
+        },
+        {
+          "id": "hot-stocks-title-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Trending Stocks"
+              },
+              "variant": "subheadlineSemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "hot-stocks-list",
+          "component": {
+            "Column": {
+              "children": {
+                "template": {
+                  "componentId": "stock-item",
+                  "dataBinding": "/stocks"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "stock-item",
+          "component": {
+            "Card": {
+              "child": "stock-item-row"
+            }
+          }
+        },
+        {
+          "id": "stock-item-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "stock-info-col",
+                  "stock-price-col"
+                ]
+              },
+              "distribution": "spaceBetween",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "stock-info-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "stock-name",
+                  "stock-code"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "stock-name",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "name"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "stock-code",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "code"
+              },
+              "variant": "caption",
+              "color": "tertiary"
+            }
+          }
+        },
+        {
+          "id": "stock-price-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "stock-price",
+                  "stock-change-row"
+                ]
+              },
+              "alignment": "end"
+            }
+          }
+        },
+        {
+          "id": "stock-price",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "price"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "stock-change-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "stock-change",
+                  "stock-percent"
+                ]
+              },
+              "distribution": "end",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "stock-change",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "change"
+              },
+              "variant": "caption",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "stock-percent",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "percent"
+              },
+              "variant": "captionSemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "portfolio-card",
+          "component": {
+            "Card": {
+              "child": "portfolio-col"
+            }
+          }
+        },
+        {
+          "id": "portfolio-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "portfolio-header-row",
+                  "portfolio-value-card",
+                  "portfolio-stats"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "portfolio-header-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "portfolio-icon",
+                  "portfolio-title"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "portfolio-icon",
+          "component": {
+            "Icon": {
+              "name": {
+                "literalString": "shopping-bag-one"
+              },
+              "style": "filled"
+            }
+          }
+        },
+        {
+          "id": "portfolio-title",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "My Portfolio"
+              },
+              "variant": "subheadlineSemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "portfolio-value-card",
+          "component": {
+            "Card": {
+              "child": "portfolio-value-col"
+            }
+          }
+        },
+        {
+          "id": "portfolio-value-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "portfolio-total-label",
+                  "portfolio-total-value",
+                  "portfolio-profit-row"
+                ]
+              },
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "portfolio-total-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Total Value"
+              },
+              "variant": "bodySans",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "portfolio-total-value",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/portfolio/totalValue"
+              },
+              "variant": "title",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "portfolio-profit-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "portfolio-profit-label",
+                  "portfolio-profit-value",
+                  "portfolio-profit-percent"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "portfolio-profit-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "P/L:"
+              },
+              "variant": "body",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "portfolio-profit-value",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/portfolio/profit"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "portfolio-profit-percent",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/portfolio/profitPercent"
+              },
+              "variant": "body",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "portfolio-stats",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "portfolio-stat-1",
+                  "portfolio-stat-2"
+                ]
+              },
+              "distribution": "spaceAround",
+              "alignment": "start"
+            }
+          }
+        },
+        {
+          "id": "portfolio-stat-1",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "portfolio-holdings-label",
+                  "portfolio-holdings-value"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "portfolio-holdings-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Holdings"
+              },
+              "variant": "caption",
+              "color": "tertiary"
+            }
+          }
+        },
+        {
+          "id": "portfolio-holdings-value",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/portfolio/holdingsCount"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "portfolio-stat-2",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "portfolio-winrate-label",
+                  "portfolio-winrate-value"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "portfolio-winrate-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Winning Positions"
+              },
+              "variant": "caption",
+              "color": "tertiary"
+            }
+          }
+        },
+        {
+          "id": "portfolio-winrate-value",
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/portfolio/winRate"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "stock-dashboard",
+      "path": "/",
+      "contents": [
+        {
+          "key": "indices",
+          "valueMap": [
+            {
+              "key": "sh",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "S&P 500"
+                },
+                {
+                  "key": "price",
+                  "valueString": "3,287.45"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+15.23"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "(+0.47%)"
+                }
+              ]
+            },
+            {
+              "key": "sz",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "NASDAQ Composite"
+                },
+                {
+                  "key": "price",
+                  "valueString": "10,892.78"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+32.15"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "(+0.30%)"
+                }
+              ]
+            },
+            {
+              "key": "hs300",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Dow Jones Industrial Average"
+                },
+                {
+                  "key": "price",
+                  "valueString": "3,856.12"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+18.67"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "(+0.49%)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "stocks",
+          "valueMap": [
+            {
+              "key": "0",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Apple"
+                },
+                {
+                  "key": "code",
+                  "valueString": "600519"
+                },
+                {
+                  "key": "price",
+                  "valueString": "¥1,678.50"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+12.30"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "+0.74%"
+                }
+              ]
+            },
+            {
+              "key": "1",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "NVIDIA"
+                },
+                {
+                  "key": "code",
+                  "valueString": "300750"
+                },
+                {
+                  "key": "price",
+                  "valueString": "¥235.80"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+5.20"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "+2.26%"
+                }
+              ]
+            },
+            {
+              "key": "2",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Microsoft"
+                },
+                {
+                  "key": "code",
+                  "valueString": "601318"
+                },
+                {
+                  "key": "price",
+                  "valueString": "¥52.35"
+                },
+                {
+                  "key": "change",
+                  "valueString": "-0.45"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "-0.85%"
+                }
+              ]
+            },
+            {
+              "key": "3",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Amazon"
+                },
+                {
+                  "key": "code",
+                  "valueString": "002594"
+                },
+                {
+                  "key": "price",
+                  "valueString": "¥278.90"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+8.75"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "+3.24%"
+                }
+              ]
+            },
+            {
+              "key": "4",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Tesla"
+                },
+                {
+                  "key": "code",
+                  "valueString": "600036"
+                },
+                {
+                  "key": "price",
+                  "valueString": "¥38.67"
+                },
+                {
+                  "key": "change",
+                  "valueString": "+0.23"
+                },
+                {
+                  "key": "percent",
+                  "valueString": "+0.60%"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "portfolio",
+          "valueMap": [
+            {
+              "key": "totalValue",
+              "valueString": "¥158,673.50"
+            },
+            {
+              "key": "profit",
+              "valueString": "+¥12,345.80"
+            },
+            {
+              "key": "profitPercent",
+              "valueString": "(+8.44%)"
+            },
+            {
+              "key": "holdingsCount",
+              "valueString": "8 positions"
+            },
+            {
+              "key": "winRate",
+              "valueString": "5 profitable"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

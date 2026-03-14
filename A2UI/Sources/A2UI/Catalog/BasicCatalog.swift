@@ -28,6 +28,7 @@ public enum BasicCatalog {
             CardComponent.register(),
             DividerComponent.register(),
             IconComponent.register(),
+            BottomBarComponent.register(),
             // Data-bound inputs
             TextFieldComponent.register(),
             CheckBoxComponent.register(),

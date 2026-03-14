@@ -1,0 +1,234 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "bill-surface",
+      "root": "root-card"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "bill-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "title-label",
+                  "divider-1",
+                  "items-column",
+                  "divider-2",
+                  "bottom-row"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "title-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Checkout Bill"
+              },
+              "variant": "title",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "divider-1",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "items-column",
+          "component": {
+            "Column": {
+              "children": {
+                "template": {
+                  "componentId": "item-row",
+                  "dataBinding": "/items"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "item-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "item-image",
+                  "item-name"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "item-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "imageUrl"
+              },
+              "size": "small"
+            }
+          }
+        },
+        {
+          "id": "item-name",
+          "weight": 1,
+          "component": {
+            "Label": {
+              "text": {
+                "path": "name"
+              },
+              "variant": "body",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "divider-2",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "bottom-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "total-price",
+                  "pay-button"
+                ]
+              },
+              "distribution": "spaceBetween",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "total-price",
+          "weight": 1,
+          "component": {
+            "Label": {
+              "text": {
+                "path": "/totalPrice"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        },
+        {
+          "id": "pay-button",
+          "component": {
+            "Button": {
+              "child": "pay-button-label",
+              "action": {
+                "name": "pay",
+                "context": [
+                  {
+                    "key": "totalPrice",
+                    "value": {
+                      "path": "/totalPrice"
+                    }
+                  }
+                ]
+              },
+              "style": "primary"
+            }
+          }
+        },
+        {
+          "id": "pay-button-label",
+          "component": {
+            "Label": {
+              "text": {
+                "literalString": "Pay Now"
+              },
+              "variant": "bodySemibold",
+              "color": "label"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "bill-surface",
+      "path": "/",
+      "contents": [
+        {
+          "key": "totalPrice",
+          "valueString": "Total ¥180"
+        },
+        {
+          "key": "items",
+          "valueMap": [
+            {
+              "key": "0",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Kung Pao Chicken"
+                },
+                {
+                  "key": "imageUrl",
+                  "valueString": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400"
+                }
+              ]
+            },
+            {
+              "key": "1",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Shredded Pork in Garlic Sauce"
+                },
+                {
+                  "key": "imageUrl",
+                  "valueString": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400"
+                }
+              ]
+            },
+            {
+              "key": "2",
+              "valueMap": [
+                {
+                  "key": "name",
+                  "valueString": "Mapo Tofu"
+                },
+                {
+                  "key": "imageUrl",
+                  "valueString": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

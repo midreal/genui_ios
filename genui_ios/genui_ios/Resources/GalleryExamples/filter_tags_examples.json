@@ -94,7 +94,6 @@
           "component": {
             "FilterTags": {
               "tags": {
-                "path": "/filters",
                 "literalArray": [
                   "Caption",
                   "<3km",

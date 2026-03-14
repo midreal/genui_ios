@@ -214,14 +214,29 @@ private final class GalleryExampleDetailVC: UIViewController {
 
         let ctx = controller.contextFor(surfaceId: surfaceId)
         let surfaceView = SurfaceView(surfaceContext: ctx)
-        view.addSubview(surfaceView)
-        surfaceView.translatesAutoresizingMaskIntoConstraints = false
         surfaceView.backgroundColor = .systemBackground
+
+        // 用 ScrollView 包裹，打破 layoutSubviews 布局循环（filter_tags/slack_water 等会触发 50+ 次）
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        surfaceView.translatesAutoresizingMaskIntoConstraints = false
+
+        scrollView.addSubview(surfaceView)
+        view.addSubview(scrollView)
+
         NSLayoutConstraint.activate([
-            surfaceView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            surfaceView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            surfaceView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            surfaceView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            surfaceView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
+            surfaceView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
+            surfaceView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
+            surfaceView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -16),
+            surfaceView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
         ])
     }
 }

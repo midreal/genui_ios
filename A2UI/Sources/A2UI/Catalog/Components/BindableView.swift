@@ -37,6 +37,20 @@ public final class BindableView: UIView {
         ])
     }
 
+    public override func layoutSubviews() {
+        // 在布局前按实际可用宽度设置多行 Label 的 preferredMaxLayoutWidth，
+        // 避免固定值导致高度不准，同时打破布局循环
+        let w = bounds.width
+        if w > 0 {
+            for sub in subviews {
+                if let label = sub as? UILabel, label.numberOfLines == 0 {
+                    label.preferredMaxLayoutWidth = w
+                }
+            }
+        }
+        super.layoutSubviews()
+    }
+
     deinit {
         cancellables.removeAll()
     }

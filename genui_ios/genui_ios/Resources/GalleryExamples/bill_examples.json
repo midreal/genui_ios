@@ -1,0 +1,251 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "bill-surface",
+      "root": "root-card",
+      "styles": {
+        "primaryColor": "#E85D26"
+      }
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "bill-surface",
+      "components": [
+        {
+          "id": "root-card",
+          "component": {
+            "Card": { "child": "root-col" }
+          }
+        },
+        {
+          "id": "root-col",
+          "component": {
+            "Column": {
+              "alignment": "stretch",
+              "children": {
+                "explicitList": [
+                  "title-row",
+                  "title-divider",
+                  "dish-row-1",
+                  "dish-row-2",
+                  "dish-row-3",
+                  "dish-row-4",
+                  "dish-row-5",
+                  "dish-row-6",
+                  "bottom-divider",
+                  "footer-row"
+                ]
+              }
+            }
+          }
+        },
+
+        {
+          "id": "title-row",
+          "component": {
+            "Row": {
+              "distribution": "center",
+              "children": { "explicitList": ["title-text"] }
+            }
+          }
+        },
+        {
+          "id": "title-text",
+          "component": {
+            "Text": {
+              "text": { "literalString": "结算账单" },
+              "usageHint": "h3"
+            }
+          }
+        },
+        {
+          "id": "title-divider",
+          "component": { "Divider": { "axis": "horizontal" } }
+        },
+
+        {
+          "id": "dish-row-1",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["dish-name-1", "dish-price-1"] }
+            }
+          }
+        },
+        {
+          "id": "dish-name-1",
+          "component": { "Label": { "text": { "literalString": "红烧肉" }, "variant": "body" } }
+        },
+        {
+          "id": "dish-price-1",
+          "component": { "Label": { "text": { "literalString": "¥45" }, "variant": "body", "color": "secondary" } }
+        },
+
+        {
+          "id": "dish-row-2",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["dish-name-2", "dish-price-2"] }
+            }
+          }
+        },
+        {
+          "id": "dish-name-2",
+          "component": { "Label": { "text": { "literalString": "清蒸鲈鱼" }, "variant": "body" } }
+        },
+        {
+          "id": "dish-price-2",
+          "component": { "Label": { "text": { "literalString": "¥68" }, "variant": "body", "color": "secondary" } }
+        },
+
+        {
+          "id": "dish-row-3",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["dish-name-3", "dish-price-3"] }
+            }
+          }
+        },
+        {
+          "id": "dish-name-3",
+          "component": { "Label": { "text": { "literalString": "宫保鸡丁" }, "variant": "body" } }
+        },
+        {
+          "id": "dish-price-3",
+          "component": { "Label": { "text": { "literalString": "¥38" }, "variant": "body", "color": "secondary" } }
+        },
+
+        {
+          "id": "dish-row-4",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["dish-name-4", "dish-price-4"] }
+            }
+          }
+        },
+        {
+          "id": "dish-name-4",
+          "component": { "Label": { "text": { "literalString": "麻婆豆腐" }, "variant": "body" } }
+        },
+        {
+          "id": "dish-price-4",
+          "component": { "Label": { "text": { "literalString": "¥22" }, "variant": "body", "color": "secondary" } }
+        },
+
+        {
+          "id": "dish-row-5",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["dish-name-5", "dish-price-5"] }
+            }
+          }
+        },
+        {
+          "id": "dish-name-5",
+          "component": { "Label": { "text": { "literalString": "白米饭 x2" }, "variant": "body" } }
+        },
+        {
+          "id": "dish-price-5",
+          "component": { "Label": { "text": { "literalString": "¥7" }, "variant": "body", "color": "secondary" } }
+        },
+
+        {
+          "id": "dish-row-6",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["dish-name-6", "dish-price-6"] }
+            }
+          }
+        },
+        {
+          "id": "dish-name-6",
+          "component": { "Label": { "text": { "literalString": "服务费" }, "variant": "body", "color": "tertiary" } }
+        },
+        {
+          "id": "dish-price-6",
+          "component": { "Label": { "text": { "literalString": "¥0" }, "variant": "body", "color": "tertiary" } }
+        },
+
+        {
+          "id": "bottom-divider",
+          "component": { "Divider": { "axis": "horizontal" } }
+        },
+
+        {
+          "id": "footer-row",
+          "component": {
+            "Row": {
+              "distribution": "spaceBetween",
+              "alignment": "center",
+              "children": { "explicitList": ["total-col", "pay-btn"] }
+            }
+          }
+        },
+        {
+          "id": "total-col",
+          "component": {
+            "Column": {
+              "alignment": "start",
+              "children": { "explicitList": ["total-hint", "total-amount"] }
+            }
+          }
+        },
+        {
+          "id": "total-hint",
+          "component": {
+            "Label": {
+              "text": { "literalString": "合计" },
+              "variant": "caption",
+              "color": "secondary"
+            }
+          }
+        },
+        {
+          "id": "total-amount",
+          "component": {
+            "Label": {
+              "text": { "literalString": "¥180" },
+              "variant": "title"
+            }
+          }
+        },
+        {
+          "id": "pay-btn",
+          "component": {
+            "Button": {
+              "child": "pay-btn-label",
+              "style": "primary",
+              "action": {
+                "name": "pay",
+                "context": [
+                  { "key": "amount", "value": { "literalNumber": 180 } }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "pay-btn-label",
+          "component": {
+            "Label": {
+              "text": { "literalString": "立即付款" },
+              "variant": "bodySansSemibold"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

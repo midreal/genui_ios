@@ -96,7 +96,7 @@
           "component": {
             "Rating": {
               "rating": {
-                "literalNumber": 5
+                "literalNumber": 4.8
               },
               "text": {
                 "literalString": "4.8 (326 reviews)"
